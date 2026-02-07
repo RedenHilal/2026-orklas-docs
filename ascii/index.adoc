@@ -1235,16 +1235,16 @@ endif::internal-generation[]
 [.createUser]
 ==== createUser
 
-`POST /users`
+`POST /user`
 
-Register a new user
+Create user
 
 ===== Description
 
+User account registration.
 
 
-
-// markup not found, no include::{specDir}users/POST/spec.adoc[opts=optional]
+// markup not found, no include::{specDir}user/POST/spec.adoc[opts=optional]
 
 
 
@@ -1257,8 +1257,8 @@ Register a new user
 |===
 |Name| Description| Required| Default| Pattern
 
-| UserCreate
-|  <<UserCreate>>
+| User
+| Created user object <<User>>
 | X
 | 
 | 
@@ -1271,12 +1271,10 @@ Register a new user
 
 ===== Return Type
 
-<<UserResponse>>
 
 
-===== Content Type
+-
 
-* application/json
 
 ===== Responses
 
@@ -1286,13 +1284,8 @@ Register a new user
 | Code | Message | Datatype
 
 
-| 201
-| User created
-|  <<UserResponse>>
-
-
-| 409
-| Username or email already exists
+| 0
+| successful operation
 |  <<>>
 
 |===
@@ -1300,20 +1293,20 @@ Register a new user
 ===== Samples
 
 
-// markup not found, no include::{snippetDir}users/POST/http-request.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/POST/http-request.adoc[opts=optional]
 
 
-// markup not found, no include::{snippetDir}users/POST/http-response.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/POST/http-response.adoc[opts=optional]
 
 
 
-// file not found, no * wiremock data link :users/POST/POST.json[]
+// file not found, no * wiremock data link :user/POST/POST.json[]
 
 
 ifdef::internal-generation[]
 ===== Implementation
 
-// markup not found, no include::{specDir}users/POST/implementation.adoc[opts=optional]
+// markup not found, no include::{specDir}user/POST/implementation.adoc[opts=optional]
 
 
 endif::internal-generation[]
@@ -1322,16 +1315,16 @@ endif::internal-generation[]
 [.deleteUser]
 ==== deleteUser
 
-`DELETE /users/{id}`
+`DELETE /user/{username}`
 
 Delete user
 
 ===== Description
 
+This can only be done by the logged in user.
 
 
-
-// markup not found, no include::{specDir}users/\{id\}/DELETE/spec.adoc[opts=optional]
+// markup not found, no include::{specDir}user/\{username\}/DELETE/spec.adoc[opts=optional]
 
 
 
@@ -1343,8 +1336,8 @@ Delete user
 |===
 |Name| Description| Required| Default| Pattern
 
-| id
-|  
+| username
+| The name that needs to be deleted 
 | X
 | null
 | 
@@ -1371,8 +1364,13 @@ Delete user
 | Code | Message | Datatype
 
 
-| 204
-| Deleted
+| 400
+| Invalid username supplied
+|  <<>>
+
+
+| 404
+| User not found
 |  <<>>
 
 |===
@@ -1380,43 +1378,56 @@ Delete user
 ===== Samples
 
 
-// markup not found, no include::{snippetDir}users/\{id\}/DELETE/http-request.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/\{username\}/DELETE/http-request.adoc[opts=optional]
 
 
-// markup not found, no include::{snippetDir}users/\{id\}/DELETE/http-response.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/\{username\}/DELETE/http-response.adoc[opts=optional]
 
 
 
-// file not found, no * wiremock data link :users/{id}/DELETE/DELETE.json[]
+// file not found, no * wiremock data link :user/{username}/DELETE/DELETE.json[]
 
 
 ifdef::internal-generation[]
 ===== Implementation
 
-// markup not found, no include::{specDir}users/\{id\}/DELETE/implementation.adoc[opts=optional]
+// markup not found, no include::{specDir}user/\{username\}/DELETE/implementation.adoc[opts=optional]
 
 
 endif::internal-generation[]
 
 
-[.getCurrentUser]
-==== getCurrentUser
+[.getUserByName]
+==== getUserByName
 
-`GET /users/me`
+`GET /user/{username}`
 
-Get current authenticated user
+Get user by user name
 
 ===== Description
 
 
 
 
-// markup not found, no include::{specDir}users/me/GET/spec.adoc[opts=optional]
+// markup not found, no include::{specDir}user/\{username\}/GET/spec.adoc[opts=optional]
 
 
 
 ===== Parameters
 
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| username
+| The name that needs to be fetched. Use user1 for testing. 
+| X
+| null
+| 
+
+|===
 
 
 
@@ -1425,7 +1436,7 @@ Get current authenticated user
 
 ===== Return Type
 
-<<UserResponse>>
+<<User>>
 
 
 ===== Content Type
@@ -1441,28 +1452,38 @@ Get current authenticated user
 
 
 | 200
-| OK
-|  <<UserResponse>>
+| successful operation
+|  <<User>>
+
+
+| 400
+| Invalid username supplied
+|  <<>>
+
+
+| 404
+| User not found
+|  <<>>
 
 |===
 
 ===== Samples
 
 
-// markup not found, no include::{snippetDir}users/me/GET/http-request.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/\{username\}/GET/http-request.adoc[opts=optional]
 
 
-// markup not found, no include::{snippetDir}users/me/GET/http-response.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/\{username\}/GET/http-response.adoc[opts=optional]
 
 
 
-// file not found, no * wiremock data link :users/me/GET/GET.json[]
+// file not found, no * wiremock data link :user/{username}/GET/GET.json[]
 
 
 ifdef::internal-generation[]
 ===== Implementation
 
-// markup not found, no include::{specDir}users/me/GET/implementation.adoc[opts=optional]
+// markup not found, no include::{specDir}user/\{username\}/GET/implementation.adoc[opts=optional]
 
 
 endif::internal-generation[]
@@ -1471,43 +1492,49 @@ endif::internal-generation[]
 [.loginUser]
 ==== loginUser
 
-`POST /users/login`
+`POST /user/login`
 
-Authenticate user
+Logs user into the system
 
 ===== Description
 
 
 
 
-// markup not found, no include::{specDir}users/login/POST/spec.adoc[opts=optional]
+// markup not found, no include::{specDir}user/login/POST/spec.adoc[opts=optional]
 
 
 
 ===== Parameters
 
 
-====== Body Parameter
+
+
+
+====== Query Parameters
 
 [cols="2,3,1,1,1"]
 |===
 |Name| Description| Required| Default| Pattern
 
-| LoginRequest
-|  <<LoginRequest>>
+| username
+| The user name for login 
 | X
-| 
+| null
+| /^[a-zA-Z0-9]+[a-zA-Z0-9\.\-_]*[a-zA-Z0-9]+$/
+
+| password
+| The password for login in clear text 
+| X
+| null
 | 
 
 |===
 
 
-
-
-
 ===== Return Type
 
-<<LoginResponse>>
+<<loginUser_200_response>>
 
 
 ===== Content Type
@@ -1524,11 +1551,11 @@ Authenticate user
 
 | 200
 | Login successful
-|  <<LoginResponse>>
+|  <<loginUser_200_response>>
 
 
-| 401
-| Invalid credentials
+| 400
+| Invalid username/password supplied
 |  <<>>
 
 |===
@@ -1536,20 +1563,20 @@ Authenticate user
 ===== Samples
 
 
-// markup not found, no include::{snippetDir}users/login/POST/http-request.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/login/POST/http-request.adoc[opts=optional]
 
 
-// markup not found, no include::{snippetDir}users/login/POST/http-response.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/login/POST/http-response.adoc[opts=optional]
 
 
 
-// file not found, no * wiremock data link :users/login/POST/POST.json[]
+// file not found, no * wiremock data link :user/login/POST/POST.json[]
 
 
 ifdef::internal-generation[]
 ===== Implementation
 
-// markup not found, no include::{specDir}users/login/POST/implementation.adoc[opts=optional]
+// markup not found, no include::{specDir}user/login/POST/implementation.adoc[opts=optional]
 
 
 endif::internal-generation[]
@@ -1558,16 +1585,16 @@ endif::internal-generation[]
 [.logoutUser]
 ==== logoutUser
 
-`POST /users/logout`
+`POST /user/logout`
 
-Logout current user
+Logs out current logged in user session
 
 ===== Description
 
-Client should discard the JWT. Server may optionally blacklist token. 
 
 
-// markup not found, no include::{specDir}users/logout/POST/spec.adoc[opts=optional]
+
+// markup not found, no include::{specDir}user/logout/POST/spec.adoc[opts=optional]
 
 
 
@@ -1594,8 +1621,8 @@ Client should discard the JWT. Server may optionally blacklist token.
 | Code | Message | Datatype
 
 
-| 204
-| Logged out
+| 0
+| successful operation
 |  <<>>
 
 |===
@@ -1603,20 +1630,20 @@ Client should discard the JWT. Server may optionally blacklist token.
 ===== Samples
 
 
-// markup not found, no include::{snippetDir}users/logout/POST/http-request.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/logout/POST/http-request.adoc[opts=optional]
 
 
-// markup not found, no include::{snippetDir}users/logout/POST/http-response.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/logout/POST/http-response.adoc[opts=optional]
 
 
 
-// file not found, no * wiremock data link :users/logout/POST/POST.json[]
+// file not found, no * wiremock data link :user/logout/POST/POST.json[]
 
 
 ifdef::internal-generation[]
 ===== Implementation
 
-// markup not found, no include::{specDir}users/logout/POST/implementation.adoc[opts=optional]
+// markup not found, no include::{specDir}user/logout/POST/implementation.adoc[opts=optional]
 
 
 endif::internal-generation[]
@@ -1625,16 +1652,16 @@ endif::internal-generation[]
 [.updateUser]
 ==== updateUser
 
-`PUT /users/{id}`
+`PUT /user/{username}`
 
-Update user
+Update a user
 
 ===== Description
 
+This can only be done by the logged in user.
 
 
-
-// markup not found, no include::{specDir}users/\{id\}/PUT/spec.adoc[opts=optional]
+// markup not found, no include::{specDir}user/\{username\}/PUT/spec.adoc[opts=optional]
 
 
 
@@ -1646,8 +1673,8 @@ Update user
 |===
 |Name| Description| Required| Default| Pattern
 
-| id
-|  
+| username
+| name that need to be deleted 
 | X
 | null
 | 
@@ -1660,8 +1687,8 @@ Update user
 |===
 |Name| Description| Required| Default| Pattern
 
-| UserUpdate
-|  <<UserUpdate>>
+| User
+| Updated user object <<User>>
 | X
 | 
 | 
@@ -1674,12 +1701,10 @@ Update user
 
 ===== Return Type
 
-<<UserResponse>>
 
 
-===== Content Type
+-
 
-* application/json
 
 ===== Responses
 
@@ -1689,13 +1714,8 @@ Update user
 | Code | Message | Datatype
 
 
-| 200
-| Updated
-|  <<UserResponse>>
-
-
-| 403
-| Forbidden
+| 400
+| Invalid user supplied
 |  <<>>
 
 
@@ -1708,20 +1728,20 @@ Update user
 ===== Samples
 
 
-// markup not found, no include::{snippetDir}users/\{id\}/PUT/http-request.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/\{username\}/PUT/http-request.adoc[opts=optional]
 
 
-// markup not found, no include::{snippetDir}users/\{id\}/PUT/http-response.adoc[opts=optional]
+// markup not found, no include::{snippetDir}user/\{username\}/PUT/http-response.adoc[opts=optional]
 
 
 
-// file not found, no * wiremock data link :users/{id}/PUT/PUT.json[]
+// file not found, no * wiremock data link :user/{username}/PUT/PUT.json[]
 
 
 ifdef::internal-generation[]
 ===== Implementation
 
-// markup not found, no include::{specDir}users/\{id\}/PUT/implementation.adoc[opts=optional]
+// markup not found, no include::{specDir}user/\{username\}/PUT/implementation.adoc[opts=optional]
 
 
 endif::internal-generation[]
@@ -1767,42 +1787,13 @@ Describes the result of uploading an image resource
 
 
 
-[#LoginRequest]
-=== _LoginRequest_ 
+[#LoginUser200Response]
+=== _LoginUser200Response_ 
 
 
 
 
-[.fields-LoginRequest]
-[cols="2,1,1,2,4,1"]
-|===
-| Field Name| Required| Nullable | Type| Description | Format
-
-| username
-| X
-| 
-|   String  
-| 
-|     
-
-| password
-| X
-| 
-|   String  
-| 
-| password    
-
-|===
-
-
-
-[#LoginResponse]
-=== _LoginResponse_ 
-
-
-
-
-[.fields-LoginResponse]
+[.fields-LoginUser200Response]
 [cols="2,1,1,2,4,1"]
 |===
 | Field Name| Required| Nullable | Type| Description | Format
@@ -1811,21 +1802,7 @@ Describes the result of uploading an image resource
 | 
 | 
 |   String  
-| 
-|     
-
-| tokenType
-| 
-| 
-|   String  
-| 
-|     
-
-| expiresIn
-| 
-| 
-|   Integer  
-| Token lifetime in seconds
+| JWT access token
 |     
 
 |===
@@ -2114,170 +2091,6 @@ A User who is purchasing from the pet store
 |   Integer  
 | User Status
 | int32    
-
-|===
-
-
-
-[#UserCreate]
-=== _UserCreate_ 
-
-
-
-
-[.fields-UserCreate]
-[cols="2,1,1,2,4,1"]
-|===
-| Field Name| Required| Nullable | Type| Description | Format
-
-| username
-| X
-| 
-|   String  
-| 
-|     
-
-| email
-| X
-| 
-|   String  
-| 
-| email    
-
-| password
-| X
-| 
-|   String  
-| 
-| password    
-
-| firstName
-| 
-| 
-|   String  
-| 
-|     
-
-| lastName
-| 
-| 
-|   String  
-| 
-|     
-
-| phone
-| 
-| 
-|   String  
-| 
-|     
-
-|===
-
-
-
-[#UserResponse]
-=== _UserResponse_ 
-
-
-
-
-[.fields-UserResponse]
-[cols="2,1,1,2,4,1"]
-|===
-| Field Name| Required| Nullable | Type| Description | Format
-
-| id
-| 
-| 
-|   Long  
-| 
-| int64    
-
-| username
-| 
-| 
-|   String  
-| 
-|     
-
-| firstName
-| 
-| 
-|   String  
-| 
-|     
-
-| lastName
-| 
-| 
-|   String  
-| 
-|     
-
-| email
-| 
-| 
-|   String  
-| 
-|     
-
-| phone
-| 
-| 
-|   String  
-| 
-|     
-
-| userStatus
-| 
-| 
-|   Integer  
-| 
-| int32    
-
-|===
-
-
-
-[#UserUpdate]
-=== _UserUpdate_ 
-
-
-
-
-[.fields-UserUpdate]
-[cols="2,1,1,2,4,1"]
-|===
-| Field Name| Required| Nullable | Type| Description | Format
-
-| email
-| 
-| 
-|   String  
-| 
-| email    
-
-| firstName
-| 
-| 
-|   String  
-| 
-|     
-
-| lastName
-| 
-| 
-|   String  
-| 
-|     
-
-| phone
-| 
-| 
-|   String  
-| 
-|     
 
 |===
 
