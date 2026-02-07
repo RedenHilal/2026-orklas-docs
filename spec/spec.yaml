@@ -18,6 +18,118 @@ tags:
   - name: schedule
     description: Possible booking time of a room
 paths:
+  /users:
+    post:
+      tags: [user]
+      summary: Register a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '409':
+          description: Username or email already exists
+  /users/login:
+    post:
+      tags: [user]
+      summary: Authenticate user
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+  /users/logout:
+    post:
+      tags: [user]
+      summary: Logout current user
+      description: >
+        Client should discard the JWT. Server may optionally blacklist token.
+      operationId: logoutUser
+      security:
+        - klas_auth: []
+      responses:
+        '204':
+          description: Logged out
+  /users/me:
+    get:
+      tags: [user]
+      summary: Get current authenticated user
+      operationId: getCurrentUser
+      security:
+        - klas_auth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+  /users/{id}:
+    put:
+      tags: [user]
+      summary: Update user
+      operationId: updateUser
+      security:
+        - klas_auth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+  
+    delete:
+      tags: [user]
+      summary: Delete user
+      operationId: deleteUser
+      security:
+        - klas_auth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
   /room:
     post:
       tags:
@@ -218,146 +330,6 @@ paths:
                   description: file to upload
                   type: string
                   format: binary
-
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: User account registration.
-      operationId: createUser
-      responses:
-        default:
-          description: successful operation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Created user object
-        required: true
-      security:
-        - klas_auth: []
-  /user/login:
-    post:
-      tags:
-        - user
-      summary: Logs user into the system
-      description: ''
-      operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: true
-          schema:
-            type: string
-            pattern: '^[a-zA-Z0-9]+[a-zA-Z0-9\.\-_]*[a-zA-Z0-9]+$'
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Login successful
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                    description: JWT access token
-        '400':
-          description: Invalid username/password supplied
-  /user/logout:
-    post:
-      tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      responses:
-        default:
-          description: successful operation
-      security:
-        - klas_auth: []
-  '/user/{username}':
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      description: ''
-      operationId: getUserByName
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be fetched. Use user1 for testing.
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
-      security:
-        - klas_auth: []
-    put:
-      tags:
-        - user
-      summary: Update a user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
-      responses:
-        '400':
-          description: Invalid user supplied
-        '404':
-          description: User not found
-      security:
-        - klas_auth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Updated user object
-        required: true
-    delete:
-      tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be deleted
-          required: true
-          schema:
-            type: string
-      responses:
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
-      security:
-        - klas_auth: []
   /reservations:
     get:
       tags: [classReserve]
@@ -506,17 +478,8 @@ paths:
       security:
         - klas_auth: []
 
-
-
 components:
   requestBodies:
-    User:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/User'
-      description: Pet object that needs to be added to the store
-      required: true
     Room:
       content:
         application/json:
@@ -529,6 +492,75 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+          format: int32
+    UserCreate:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+    UserUpdate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+    LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        tokenType:
+          type: string
+          example: Bearer
+        expiresIn:
+          type: integer
+          description: Token lifetime in seconds
     Room:
       title: Room entity
       description: A Room for user to reserve
@@ -616,7 +648,6 @@ components:
           type: string
           format: date-time
 
-
     User:
       title: a User
       description: A User who is purchasing from the pet store
@@ -664,4 +695,5 @@ components:
           type: string
         message:
           type: string
+
 
