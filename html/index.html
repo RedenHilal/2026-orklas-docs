@@ -861,12 +861,32 @@ ul.nav-tabs {
   },
   "description" : "Describes the result of uploading an image resource"
 };
-    defs["loginUser_200_response"] = {
+    defs["LoginRequest"] = {
+  "required" : [ "password", "username" ],
+  "type" : "object",
+  "properties" : {
+    "username" : {
+      "type" : "string"
+    },
+    "password" : {
+      "type" : "string",
+      "format" : "password"
+    }
+  }
+};
+    defs["LoginResponse"] = {
   "type" : "object",
   "properties" : {
     "accessToken" : {
+      "type" : "string"
+    },
+    "tokenType" : {
       "type" : "string",
-      "description" : "JWT access token"
+      "example" : "Bearer"
+    },
+    "expiresIn" : {
+      "type" : "integer",
+      "description" : "Token lifetime in seconds"
     }
   }
 };
@@ -1025,6 +1045,78 @@ ul.nav-tabs {
   },
   "description" : "A User who is purchasing from the pet store"
 };
+    defs["UserCreate"] = {
+  "required" : [ "email", "password", "username" ],
+  "type" : "object",
+  "properties" : {
+    "username" : {
+      "type" : "string"
+    },
+    "email" : {
+      "type" : "string",
+      "format" : "email"
+    },
+    "password" : {
+      "type" : "string",
+      "format" : "password"
+    },
+    "firstName" : {
+      "type" : "string"
+    },
+    "lastName" : {
+      "type" : "string"
+    },
+    "phone" : {
+      "type" : "string"
+    }
+  }
+};
+    defs["UserResponse"] = {
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : "integer",
+      "format" : "int64"
+    },
+    "username" : {
+      "type" : "string"
+    },
+    "firstName" : {
+      "type" : "string"
+    },
+    "lastName" : {
+      "type" : "string"
+    },
+    "email" : {
+      "type" : "string"
+    },
+    "phone" : {
+      "type" : "string"
+    },
+    "userStatus" : {
+      "type" : "integer",
+      "format" : "int32"
+    }
+  }
+};
+    defs["UserUpdate"] = {
+  "type" : "object",
+  "properties" : {
+    "email" : {
+      "type" : "string",
+      "format" : "email"
+    },
+    "firstName" : {
+      "type" : "string"
+    },
+    "lastName" : {
+      "type" : "string"
+    },
+    "phone" : {
+      "type" : "string"
+    }
+  }
+};
 
 
     var errs = {};
@@ -1093,8 +1185,8 @@ ul.nav-tabs {
                     <li data-group="User" data-name="deleteUser" class="">
                       <a href="#api-User-deleteUser">deleteUser</a>
                     </li>
-                    <li data-group="User" data-name="getUserByName" class="">
-                      <a href="#api-User-getUserByName">getUserByName</a>
+                    <li data-group="User" data-name="getCurrentUser" class="">
+                      <a href="#api-User-getCurrentUser">getCurrentUser</a>
                     </li>
                     <li data-group="User" data-name="loginUser" class="">
                       <a href="#api-User-loginUser">loginUser</a>
@@ -7248,15 +7340,15 @@ pub fn main() {
                       <article id="api-User-createUser-0" data-group="User" data-name="createUser" data-version="0">
                         <div class="pull-left">
                           <h1>createUser</h1>
-                          <p>Create user</p>
+                          <p>Register a new user</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">User account registration.</p>
+                        <p class="marked"></p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/user</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/users</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
@@ -7279,16 +7371,14 @@ pub fn main() {
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-User-createUser-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X POST \
- -H "Authorization: Bearer [[accessToken]]" \
+ -H "Accept: application/json" \
  -H "Content-Type: application/json" \
- "http://petstore.swagger.io/v2/user" \
+ "http://petstore.swagger.io/v2/users" \
  -d '{
   &quot;firstName&quot; : &quot;firstName&quot;,
   &quot;lastName&quot; : &quot;lastName&quot;,
   &quot;password&quot; : &quot;password&quot;,
-  &quot;userStatus&quot; : 6,
   &quot;phone&quot; : &quot;phone&quot;,
-  &quot;id&quot; : 0,
   &quot;email&quot; : &quot;email&quot;,
   &quot;username&quot; : &quot;username&quot;
 }'
@@ -7305,18 +7395,14 @@ import java.util.*;
 
 public class UserApiExample {
     public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-
-        // Configure Bearer (JWT) access token for authorization: klas_auth
-        HttpBearerAuth klas_auth = (HttpBearerAuth) defaultClient.getAuthentication("klas_auth");
-        klas_auth.setBearerToken("BEARER TOKEN");
 
         // Create an instance of the API class
         UserApi apiInstance = new UserApi();
-        User user = ; // User | 
+        UserCreate userCreate = ; // UserCreate | 
 
         try {
-            apiInstance.createUser(user);
+            UserResponse result = apiInstance.createUser(userCreate);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#createUser");
             e.printStackTrace();
@@ -7331,10 +7417,10 @@ public class UserApiExample {
 
 final api_instance = DefaultApi();
 
-final User user = new User(); // User | 
+final UserCreate userCreate = new UserCreate(); // UserCreate | 
 
 try {
-    final result = await api_instance.createUser(user);
+    final result = await api_instance.createUser(userCreate);
     print(result);
 } catch (e) {
     print('Exception when calling DefaultApi->createUser: $e\n');
@@ -7349,10 +7435,11 @@ try {
 public class UserApiExample {
     public static void main(String[] args) {
         UserApi apiInstance = new UserApi();
-        User user = ; // User | 
+        UserCreate userCreate = ; // UserCreate | 
 
         try {
-            apiInstance.createUser(user);
+            UserResponse result = apiInstance.createUser(userCreate);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#createUser");
             e.printStackTrace();
@@ -7365,18 +7452,18 @@ public class UserApiExample {
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
                             <div class="tab-pane" id="examples-User-createUser-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
-
-// Configure Bearer (JWT) access token for authorization: klas_auth
-[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
+                              <pre class="prettyprint"><code class="language-cpp">
 
 // Create an instance of the API class
 UserApi *apiInstance = [[UserApi alloc] init];
-User *user = ; // 
+UserCreate *userCreate = ; // 
 
-// Create user
-[apiInstance createUserWith:user
-              completionHandler: ^(NSError* error) {
+// Register a new user
+[apiInstance createUserWith:userCreate
+              completionHandler: ^(UserResponse output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
     if (error) {
         NSLog(@"Error: %@", error);
     }
@@ -7386,24 +7473,19 @@ User *user = ; //
 
                             <div class="tab-pane" id="examples-User-createUser-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var OpenApiOrklas = require('open_api_orklas');
-var defaultClient = OpenApiOrklas.ApiClient.instance;
-
-// Configure Bearer (JWT) access token for authorization: klas_auth
-var klas_auth = defaultClient.authentications['klas_auth'];
-klas_auth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new OpenApiOrklas.UserApi()
-var user = ; // {User} 
+var userCreate = ; // {UserCreate} 
 
 var callback = function(error, data, response) {
   if (error) {
     console.error(error);
   } else {
-    console.log('API called successfully.');
+    console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.createUser(user, callback);
+api.createUser(userCreate, callback);
 </code></pre>
                             </div>
 
@@ -7423,16 +7505,15 @@ namespace Example
     {
         public void main()
         {
-            // Configure Bearer (JWT) access token for authorization: klas_auth
-            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             // Create an instance of the API class
             var apiInstance = new UserApi();
-            var user = new User(); // User | 
+            var userCreate = new UserCreate(); // UserCreate | 
 
             try {
-                // Create user
-                apiInstance.createUser(user);
+                // Register a new user
+                UserResponse result = apiInstance.createUser(userCreate);
+                Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling UserApi.createUser: " + e.Message );
             }
@@ -7446,15 +7527,13 @@ namespace Example
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure Bearer (JWT) access token for authorization: klas_auth
-OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
-
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\UserApi();
-$user = ; // User | 
+$userCreate = ; // UserCreate | 
 
 try {
-    $api_instance->createUser($user);
+    $result = $api_instance->createUser($userCreate);
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UserApi->createUser: ', $e->getMessage(), PHP_EOL;
 }
@@ -7466,15 +7545,13 @@ try {
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::UserApi;
 
-# Configure Bearer (JWT) access token for authorization: klas_auth
-$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
-
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::UserApi->new();
-my $user = WWW::OPenAPIClient::Object::User->new(); # User | 
+my $userCreate = WWW::OPenAPIClient::Object::UserCreate->new(); # UserCreate | 
 
 eval {
-    $api_instance->createUser(user => $user);
+    my $result = $api_instance->createUser(userCreate => $userCreate);
+    print Dumper($result);
 };
 if ($@) {
     warn "Exception when calling UserApi->createUser: $@\n";
@@ -7488,16 +7565,14 @@ import openapi_client
 from openapi_client.rest import ApiException
 from pprint import pprint
 
-# Configure Bearer (JWT) access token for authorization: klas_auth
-openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
 # Create an instance of the API class
 api_instance = openapi_client.UserApi()
-user =  # User | 
+userCreate =  # UserCreate | 
 
 try:
-    # Create user
-    api_instance.create_user(user)
+    # Register a new user
+    api_response = api_instance.create_user(userCreate)
+    pprint(api_response)
 except ApiException as e:
     print("Exception when calling UserApi->createUser: %s\n" % e)</code></pre>
                             </div>
@@ -7506,10 +7581,10 @@ except ApiException as e:
                               <pre class="prettyprint"><code class="language-rust">extern crate UserApi;
 
 pub fn main() {
-    let user = ; // User
+    let userCreate = ; // UserCreate
 
     let mut context = UserApi::Context::default();
-    let result = client.createUser(user, &context).wait();
+    let result = client.createUser(userCreate, &context).wait();
 
     println!("{:?}", result);
 }
@@ -7532,17 +7607,16 @@ pub fn main() {
                                 <th width="150px">Name</th>
                                 <th>Description</th>
                               </tr>
-                                <tr><td style="width:150px;">user <span style="color:red;">*</span></td>
+                                <tr><td style="width:150px;">userCreate <span style="color:red;">*</span></td>
 <td>
-<p class="marked">Created user object</p>
+<p class="marked"></p>
 <script>
 $(document).ready(function() {
   var schemaWrapper = {
-  "description" : "Created user object",
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/User"
+        "$ref" : "#/components/schemas/UserCreate"
       }
     }
   },
@@ -7565,12 +7639,12 @@ $(document).ready(function() {
   }
 
   var view = new JSONSchemaView(schema,2,{isBodyParam: true});
-  var result = $('#d2e199_createUser_user');
+  var result = $('#d2e199_createUser_userCreate');
   result.empty();
   result.append(view.render());
 });
 </script>
-<div id="d2e199_createUser_user"></div>
+<div id="d2e199_createUser_userCreate"></div>
 </td>
 </tr>
 
@@ -7579,33 +7653,45 @@ $(document).ready(function() {
 
 
                           <h2>Responses</h2>
-                            <h3 id="examples-User-createUser-title-default"></h3>
-                            <p id="examples-User-createUser-description-default" class="marked"></p>
+                            <h3 id="examples-User-createUser-title-201"></h3>
+                            <p id="examples-User-createUser-description-201" class="marked"></p>
                             <script>
-                              var responseUserdefault_description = `successful operation`;
-                              var responseUserdefault_description_break = responseUserdefault_description.indexOf('\n');
-                              if (responseUserdefault_description_break == -1) {
-                                $("#examples-User-createUser-title-default").text("Status: default - " + responseUserdefault_description);
+                              var responseUser201_description = `User created`;
+                              var responseUser201_description_break = responseUser201_description.indexOf('\n');
+                              if (responseUser201_description_break == -1) {
+                                $("#examples-User-createUser-title-201").text("Status: 201 - " + responseUser201_description);
                               } else {
-                                $("#examples-User-createUser-title-default").text("Status: default - " + responseUserdefault_description.substring(0, responseUserdefault_description_break));
-                                $("#examples-User-createUser-description-default").html(responseUserdefault_description.substring(responseUserdefault_description_break));
+                                $("#examples-User-createUser-title-201").text("Status: 201 - " + responseUser201_description.substring(0, responseUser201_description_break));
+                                $("#examples-User-createUser-description-201").html(responseUser201_description.substring(responseUser201_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-User-createUser-default" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-User-createUser-201" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-User-createUser-201-schema">Schema</a>
+                                </li>
+
+
 
 
                             </ul>
 
 
-                            <div class="tab-content" id="responses-User-createUser-default-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-User-createUser-default-schema">
-                                <div id="responses-User-createUser-schema-default" class="exampleStyle">
+                            <div class="tab-content" id="responses-User-createUser-201-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-User-createUser-201-schema">
+                                <div id="responses-User-createUser-schema-201" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
-  "description" : "successful operation"
+  "description" : "User created",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/UserResponse"
+      }
+    }
+  }
 };
                                       var schema = findNode('schema',schemaWrapper).schema;
                                       if (!schema) {
@@ -7633,14 +7719,78 @@ $(document).ready(function() {
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-User-createUser-default-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-User-createUser-schema-default');
+                                      $('#responses-User-createUser-201-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-User-createUser-schema-201');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-User-createUser-default-schema-data' type='hidden' value=''></input>
+                                <input id='responses-User-createUser-201-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                            <h3 id="examples-User-createUser-title-409"></h3>
+                            <p id="examples-User-createUser-description-409" class="marked"></p>
+                            <script>
+                              var responseUser409_description = `Username or email already exists`;
+                              var responseUser409_description_break = responseUser409_description.indexOf('\n');
+                              if (responseUser409_description_break == -1) {
+                                $("#examples-User-createUser-title-409").text("Status: 409 - " + responseUser409_description);
+                              } else {
+                                $("#examples-User-createUser-title-409").text("Status: 409 - " + responseUser409_description.substring(0, responseUser409_description_break));
+                                $("#examples-User-createUser-description-409").html(responseUser409_description.substring(responseUser409_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-User-createUser-409" class="nav nav-tabs nav-tabs-examples" >
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-User-createUser-409-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-User-createUser-409-schema">
+                                <div id="responses-User-createUser-schema-409" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Username or email already exists"
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-User-createUser-409-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-User-createUser-schema-409');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-User-createUser-409-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                         </article>
@@ -7655,10 +7805,10 @@ $(document).ready(function() {
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">This can only be done by the logged in user.</p>
+                        <p class="marked"></p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="delete"><code><span class="pln">/user/{username}</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="delete"><code><span class="pln">/users/{id}</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
@@ -7682,7 +7832,7 @@ $(document).ready(function() {
                           <div class="tab-pane active" id="examples-User-deleteUser-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X DELETE \
  -H "Authorization: Bearer [[accessToken]]" \
- "http://petstore.swagger.io/v2/user/{username}"
+ "http://petstore.swagger.io/v2/users/{id}"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-User-deleteUser-0-java">
@@ -7704,10 +7854,10 @@ public class UserApiExample {
 
         // Create an instance of the API class
         UserApi apiInstance = new UserApi();
-        String username = username_example; // String | The name that needs to be deleted
+        Integer id = 56; // Integer | 
 
         try {
-            apiInstance.deleteUser(username);
+            apiInstance.deleteUser(id);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#deleteUser");
             e.printStackTrace();
@@ -7722,10 +7872,10 @@ public class UserApiExample {
 
 final api_instance = DefaultApi();
 
-final String username = new String(); // String | The name that needs to be deleted
+final Integer id = new Integer(); // Integer | 
 
 try {
-    final result = await api_instance.deleteUser(username);
+    final result = await api_instance.deleteUser(id);
     print(result);
 } catch (e) {
     print('Exception when calling DefaultApi->deleteUser: $e\n');
@@ -7740,10 +7890,10 @@ try {
 public class UserApiExample {
     public static void main(String[] args) {
         UserApi apiInstance = new UserApi();
-        String username = username_example; // String | The name that needs to be deleted
+        Integer id = 56; // Integer | 
 
         try {
-            apiInstance.deleteUser(username);
+            apiInstance.deleteUser(id);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#deleteUser");
             e.printStackTrace();
@@ -7763,10 +7913,10 @@ public class UserApiExample {
 
 // Create an instance of the API class
 UserApi *apiInstance = [[UserApi alloc] init];
-String *username = username_example; // The name that needs to be deleted (default to null)
+Integer *id = 56; //  (default to null)
 
 // Delete user
-[apiInstance deleteUserWith:username
+[apiInstance deleteUserWith:id
               completionHandler: ^(NSError* error) {
     if (error) {
         NSLog(@"Error: %@", error);
@@ -7785,7 +7935,7 @@ klas_auth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new OpenApiOrklas.UserApi()
-var username = username_example; // {String} The name that needs to be deleted
+var id = 56; // {Integer} 
 
 var callback = function(error, data, response) {
   if (error) {
@@ -7794,7 +7944,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully.');
   }
 };
-api.deleteUser(username, callback);
+api.deleteUser(id, callback);
 </code></pre>
                             </div>
 
@@ -7819,11 +7969,11 @@ namespace Example
 
             // Create an instance of the API class
             var apiInstance = new UserApi();
-            var username = username_example;  // String | The name that needs to be deleted (default to null)
+            var id = 56;  // Integer |  (default to null)
 
             try {
                 // Delete user
-                apiInstance.deleteUser(username);
+                apiInstance.deleteUser(id);
             } catch (Exception e) {
                 Debug.Print("Exception when calling UserApi.deleteUser: " + e.Message );
             }
@@ -7842,10 +7992,10 @@ OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('',
 
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\UserApi();
-$username = username_example; // String | The name that needs to be deleted
+$id = 56; // Integer | 
 
 try {
-    $api_instance->deleteUser($username);
+    $api_instance->deleteUser($id);
 } catch (Exception $e) {
     echo 'Exception when calling UserApi->deleteUser: ', $e->getMessage(), PHP_EOL;
 }
@@ -7862,10 +8012,10 @@ $WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::UserApi->new();
-my $username = username_example; # String | The name that needs to be deleted
+my $id = 56; # Integer | 
 
 eval {
-    $api_instance->deleteUser(username => $username);
+    $api_instance->deleteUser(id => $id);
 };
 if ($@) {
     warn "Exception when calling UserApi->deleteUser: $@\n";
@@ -7884,11 +8034,11 @@ openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 
 # Create an instance of the API class
 api_instance = openapi_client.UserApi()
-username = username_example # String | The name that needs to be deleted (default to null)
+id = 56 # Integer |  (default to null)
 
 try:
     # Delete user
-    api_instance.delete_user(username)
+    api_instance.delete_user(id)
 except ApiException as e:
     print("Exception when calling UserApi->deleteUser: %s\n" % e)</code></pre>
                             </div>
@@ -7897,10 +8047,10 @@ except ApiException as e:
                               <pre class="prettyprint"><code class="language-rust">extern crate UserApi;
 
 pub fn main() {
-    let username = username_example; // String
+    let id = 56; // Integer
 
     let mut context = UserApi::Context::default();
-    let result = client.deleteUser(username, &context).wait();
+    let result = client.deleteUser(id, &context).wait();
 
     println!("{:?}", result);
 }
@@ -7921,20 +8071,17 @@ pub fn main() {
                                   <th width="150px">Name</th>
                                   <th>Description</th>
                                 </tr>
-                                  <tr><td style="width:150px;">username*</td>
+                                  <tr><td style="width:150px;">id*</td>
 <td>
 
 
-    <div id="d2e199_deleteUser_username">
+    <div id="d2e199_deleteUser_id">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
-                    String
+                    Integer
                 </span>
 
-                    <div class="inner description marked">
-The name that needs to be deleted
-                    </div>
             </div>
                 <div class="inner required">
                     Required
@@ -7951,33 +8098,33 @@ The name that needs to be deleted
 
 
                           <h2>Responses</h2>
-                            <h3 id="examples-User-deleteUser-title-400"></h3>
-                            <p id="examples-User-deleteUser-description-400" class="marked"></p>
+                            <h3 id="examples-User-deleteUser-title-204"></h3>
+                            <p id="examples-User-deleteUser-description-204" class="marked"></p>
                             <script>
-                              var responseUser400_description = `Invalid username supplied`;
-                              var responseUser400_description_break = responseUser400_description.indexOf('\n');
-                              if (responseUser400_description_break == -1) {
-                                $("#examples-User-deleteUser-title-400").text("Status: 400 - " + responseUser400_description);
+                              var responseUser204_description = `Deleted`;
+                              var responseUser204_description_break = responseUser204_description.indexOf('\n');
+                              if (responseUser204_description_break == -1) {
+                                $("#examples-User-deleteUser-title-204").text("Status: 204 - " + responseUser204_description);
                               } else {
-                                $("#examples-User-deleteUser-title-400").text("Status: 400 - " + responseUser400_description.substring(0, responseUser400_description_break));
-                                $("#examples-User-deleteUser-description-400").html(responseUser400_description.substring(responseUser400_description_break));
+                                $("#examples-User-deleteUser-title-204").text("Status: 204 - " + responseUser204_description.substring(0, responseUser204_description_break));
+                                $("#examples-User-deleteUser-description-204").html(responseUser204_description.substring(responseUser204_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-User-deleteUser-400" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-User-deleteUser-204" class="nav nav-tabs nav-tabs-examples" >
 
 
                             </ul>
 
 
-                            <div class="tab-content" id="responses-User-deleteUser-400-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-User-deleteUser-400-schema">
-                                <div id="responses-User-deleteUser-schema-400" class="exampleStyle">
+                            <div class="tab-content" id="responses-User-deleteUser-204-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-User-deleteUser-204-schema">
+                                <div id="responses-User-deleteUser-schema-204" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
-  "description" : "Invalid username supplied"
+  "description" : "Deleted"
 };
                                       var schema = findNode('schema',schemaWrapper).schema;
                                       if (!schema) {
@@ -8005,88 +8152,24 @@ The name that needs to be deleted
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-User-deleteUser-400-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-User-deleteUser-schema-400');
+                                      $('#responses-User-deleteUser-204-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-User-deleteUser-schema-204');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-User-deleteUser-400-schema-data' type='hidden' value=''></input>
-                              </div>
-                            </div>
-                            <h3 id="examples-User-deleteUser-title-404"></h3>
-                            <p id="examples-User-deleteUser-description-404" class="marked"></p>
-                            <script>
-                              var responseUser404_description = `User not found`;
-                              var responseUser404_description_break = responseUser404_description.indexOf('\n');
-                              if (responseUser404_description_break == -1) {
-                                $("#examples-User-deleteUser-title-404").text("Status: 404 - " + responseUser404_description);
-                              } else {
-                                $("#examples-User-deleteUser-title-404").text("Status: 404 - " + responseUser404_description.substring(0, responseUser404_description_break));
-                                $("#examples-User-deleteUser-description-404").html(responseUser404_description.substring(responseUser404_description_break));
-                              }
-                            </script>
-
-
-                            <ul id="responses-detail-User-deleteUser-404" class="nav nav-tabs nav-tabs-examples" >
-
-
-                            </ul>
-
-
-                            <div class="tab-content" id="responses-User-deleteUser-404-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-User-deleteUser-404-schema">
-                                <div id="responses-User-deleteUser-schema-404" class="exampleStyle">
-                                  <script>
-                                    $(document).ready(function() {
-                                      var schemaWrapper = {
-  "description" : "User not found"
-};
-                                      var schema = findNode('schema',schemaWrapper).schema;
-                                      if (!schema) {
-                                        schema = schemaWrapper.schema;
-                                      }
-                                      if (schema == null) {
-                                        return;
-                                      }
-                                      if (schema.$ref != null) {
-                                        schema = defsParser.$refs.get(schema.$ref);
-                                        if (schema.properties != null) {
-                                          Object.keys(schema.properties).forEach( (item) => {
-                                            if (schema.properties[item].$ref != null) {
-                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
-                                            }
-                                          });
-                                        }
-                                      } else if (schema.items != null && schema.items.$ref != null) {
-                                        schema.items = defsParser.$refs.get(schema.items.$ref);
-                                      } else {
-                                        schemaWrapper.definitions = Object.assign({}, defs);
-                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
-                                          console.log(err);
-                                        });
-                                      }
-
-                                      var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-User-deleteUser-404-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-User-deleteUser-schema-404');
-                                      result.empty();
-                                      result.append(view.render());
-                                    });
-                                  </script>
-                                </div>
-                                <input id='responses-User-deleteUser-404-schema-data' type='hidden' value=''></input>
+                                <input id='responses-User-deleteUser-204-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                         </article>
                       </div>
                       <hr>
-                    <div id="api-User-getUserByName">
-                      <article id="api-User-getUserByName-0" data-group="User" data-name="getUserByName" data-version="0">
+                    <div id="api-User-getCurrentUser">
+                      <article id="api-User-getCurrentUser-0" data-group="User" data-name="getCurrentUser" data-version="0">
                         <div class="pull-left">
-                          <h1>getUserByName</h1>
-                          <p>Get user by user name</p>
+                          <h1>getCurrentUser</h1>
+                          <p>Get current authenticated user</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
@@ -8094,35 +8177,35 @@ The name that needs to be deleted
                         <p class="marked"></p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/user/{username}</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/users/me</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
                         <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-User-getUserByName-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-User-getUserByName-0-java">Java</a></li>
-                          <li class=""><a href="#examples-User-getUserByName-0-dart">Dart</a></li>
-                          <li class=""><a href="#examples-User-getUserByName-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-User-getUserByName-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-User-getUserByName-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-User-getUserByName-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-User-getUserByName-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-User-getUserByName-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-User-getUserByName-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-User-getUserByName-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-User-getUserByName-0-python">Python</a></li>
-                          <li class=""><a href="#examples-User-getUserByName-0-rust">Rust</a></li>
+                          <li class="active"><a href="#examples-User-getCurrentUser-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-User-getCurrentUser-0-java">Java</a></li>
+                          <li class=""><a href="#examples-User-getCurrentUser-0-dart">Dart</a></li>
+                          <li class=""><a href="#examples-User-getCurrentUser-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-User-getCurrentUser-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-User-getCurrentUser-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-User-getCurrentUser-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-User-getCurrentUser-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-User-getCurrentUser-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-User-getCurrentUser-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-User-getCurrentUser-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-User-getCurrentUser-0-python">Python</a></li>
+                          <li class=""><a href="#examples-User-getCurrentUser-0-rust">Rust</a></li>
                         </ul>
 
                         <div class="tab-content">
-                          <div class="tab-pane active" id="examples-User-getUserByName-0-curl">
+                          <div class="tab-pane active" id="examples-User-getCurrentUser-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
  -H "Authorization: Bearer [[accessToken]]" \
  -H "Accept: application/json" \
- "http://petstore.swagger.io/v2/user/{username}"
+ "http://petstore.swagger.io/v2/users/me"
 </code></pre>
                           </div>
-                          <div class="tab-pane" id="examples-User-getUserByName-0-java">
+                          <div class="tab-pane" id="examples-User-getCurrentUser-0-java">
                             <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
 import org.openapitools.client.auth.*;
 import org.openapitools.client.model.*;
@@ -8141,13 +8224,12 @@ public class UserApiExample {
 
         // Create an instance of the API class
         UserApi apiInstance = new UserApi();
-        String username = username_example; // String | The name that needs to be fetched. Use user1 for testing.
 
         try {
-            User result = apiInstance.getUserByName(username);
+            UserResponse result = apiInstance.getCurrentUser();
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#getUserByName");
+            System.err.println("Exception when calling UserApi#getCurrentUser");
             e.printStackTrace();
         }
     }
@@ -8155,46 +8237,44 @@ public class UserApiExample {
 </code></pre>
                           </div>
 
-                          <div class="tab-pane" id="examples-User-getUserByName-0-dart">
+                          <div class="tab-pane" id="examples-User-getCurrentUser-0-dart">
                             <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
 
 final api_instance = DefaultApi();
 
-final String username = new String(); // String | The name that needs to be fetched. Use user1 for testing.
 
 try {
-    final result = await api_instance.getUserByName(username);
+    final result = await api_instance.getCurrentUser();
     print(result);
 } catch (e) {
-    print('Exception when calling DefaultApi->getUserByName: $e\n');
+    print('Exception when calling DefaultApi->getCurrentUser: $e\n');
 }
 
 </code></pre>
                           </div>
 
-                          <div class="tab-pane" id="examples-User-getUserByName-0-android">
+                          <div class="tab-pane" id="examples-User-getCurrentUser-0-android">
                             <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.UserApi;
 
 public class UserApiExample {
     public static void main(String[] args) {
         UserApi apiInstance = new UserApi();
-        String username = username_example; // String | The name that needs to be fetched. Use user1 for testing.
 
         try {
-            User result = apiInstance.getUserByName(username);
+            UserResponse result = apiInstance.getCurrentUser();
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#getUserByName");
+            System.err.println("Exception when calling UserApi#getCurrentUser");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
   <!--
-  <div class="tab-pane" id="examples-User-getUserByName-0-groovy">
+  <div class="tab-pane" id="examples-User-getCurrentUser-0-groovy">
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
-                            <div class="tab-pane" id="examples-User-getUserByName-0-objc">
+                            <div class="tab-pane" id="examples-User-getCurrentUser-0-objc">
                               <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
 
 // Configure Bearer (JWT) access token for authorization: klas_auth
@@ -8202,11 +8282,10 @@ public class UserApiExample {
 
 // Create an instance of the API class
 UserApi *apiInstance = [[UserApi alloc] init];
-String *username = username_example; // The name that needs to be fetched. Use user1 for testing. (default to null)
 
-// Get user by user name
-[apiInstance getUserByNameWith:username
-              completionHandler: ^(User output, NSError* error) {
+// Get current authenticated user
+[apiInstance getCurrentUserWithCompletionHandler: 
+              ^(UserResponse output, NSError* error) {
     if (output) {
         NSLog(@"%@", output);
     }
@@ -8217,7 +8296,7 @@ String *username = username_example; // The name that needs to be fetched. Use u
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-User-getUserByName-0-javascript">
+                            <div class="tab-pane" id="examples-User-getCurrentUser-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var OpenApiOrklas = require('open_api_orklas');
 var defaultClient = OpenApiOrklas.ApiClient.instance;
 
@@ -8227,8 +8306,6 @@ klas_auth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new OpenApiOrklas.UserApi()
-var username = username_example; // {String} The name that needs to be fetched. Use user1 for testing.
-
 var callback = function(error, data, response) {
   if (error) {
     console.error(error);
@@ -8236,14 +8313,14 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.getUserByName(username, callback);
+api.getCurrentUser(callback);
 </code></pre>
                             </div>
 
-                            <!--<div class="tab-pane" id="examples-User-getUserByName-0-angular">
+                            <!--<div class="tab-pane" id="examples-User-getCurrentUser-0-angular">
               <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
             </div>-->
-                            <div class="tab-pane" id="examples-User-getUserByName-0-csharp">
+                            <div class="tab-pane" id="examples-User-getCurrentUser-0-csharp">
                               <pre class="prettyprint"><code class="language-cs">using System;
 using System.Diagnostics;
 using Org.OpenAPITools.Api;
@@ -8252,7 +8329,7 @@ using Org.OpenAPITools.Model;
 
 namespace Example
 {
-    public class getUserByNameExample
+    public class getCurrentUserExample
     {
         public void main()
         {
@@ -8261,14 +8338,13 @@ namespace Example
 
             // Create an instance of the API class
             var apiInstance = new UserApi();
-            var username = username_example;  // String | The name that needs to be fetched. Use user1 for testing. (default to null)
 
             try {
-                // Get user by user name
-                User result = apiInstance.getUserByName(username);
+                // Get current authenticated user
+                UserResponse result = apiInstance.getCurrentUser();
                 Debug.WriteLine(result);
             } catch (Exception e) {
-                Debug.Print("Exception when calling UserApi.getUserByName: " + e.Message );
+                Debug.Print("Exception when calling UserApi.getCurrentUser: " + e.Message );
             }
         }
     }
@@ -8276,7 +8352,7 @@ namespace Example
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-User-getUserByName-0-php">
+                            <div class="tab-pane" id="examples-User-getCurrentUser-0-php">
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
@@ -8285,18 +8361,17 @@ OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('',
 
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\UserApi();
-$username = username_example; // String | The name that needs to be fetched. Use user1 for testing.
 
 try {
-    $result = $api_instance->getUserByName($username);
+    $result = $api_instance->getCurrentUser();
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling UserApi->getUserByName: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling UserApi->getCurrentUser: ', $e->getMessage(), PHP_EOL;
 }
 ?></code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-User-getUserByName-0-perl">
+                            <div class="tab-pane" id="examples-User-getCurrentUser-0-perl">
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::UserApi;
@@ -8306,18 +8381,17 @@ $WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::UserApi->new();
-my $username = username_example; # String | The name that needs to be fetched. Use user1 for testing.
 
 eval {
-    my $result = $api_instance->getUserByName(username => $username);
+    my $result = $api_instance->getCurrentUser();
     print Dumper($result);
 };
 if ($@) {
-    warn "Exception when calling UserApi->getUserByName: $@\n";
+    warn "Exception when calling UserApi->getCurrentUser: $@\n";
 }</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-User-getUserByName-0-python">
+                            <div class="tab-pane" id="examples-User-getCurrentUser-0-python">
                               <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
 import time
 import openapi_client
@@ -8329,24 +8403,22 @@ openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 
 # Create an instance of the API class
 api_instance = openapi_client.UserApi()
-username = username_example # String | The name that needs to be fetched. Use user1 for testing. (default to null)
 
 try:
-    # Get user by user name
-    api_response = api_instance.get_user_by_name(username)
+    # Get current authenticated user
+    api_response = api_instance.get_current_user()
     pprint(api_response)
 except ApiException as e:
-    print("Exception when calling UserApi->getUserByName: %s\n" % e)</code></pre>
+    print("Exception when calling UserApi->getCurrentUser: %s\n" % e)</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-User-getUserByName-0-rust">
+                            <div class="tab-pane" id="examples-User-getCurrentUser-0-rust">
                               <pre class="prettyprint"><code class="language-rust">extern crate UserApi;
 
 pub fn main() {
-    let username = username_example; // String
 
     let mut context = UserApi::Context::default();
-    let result = client.getUserByName(username, &context).wait();
+    let result = client.getCurrentUser(&context).wait();
 
     println!("{:?}", result);
 }
@@ -8361,59 +8433,29 @@ pub fn main() {
 
                           <h2>Parameters</h2>
 
-                            <div class="methodsubtabletitle">Path parameters</div>
-                            <table id="methodsubtable">
-                                <tr>
-                                  <th width="150px">Name</th>
-                                  <th>Description</th>
-                                </tr>
-                                  <tr><td style="width:150px;">username*</td>
-<td>
-
-
-    <div id="d2e199_getUserByName_username">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-The name that needs to be fetched. Use user1 for testing.
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                            </table>
 
 
 
 
 
                           <h2>Responses</h2>
-                            <h3 id="examples-User-getUserByName-title-200"></h3>
-                            <p id="examples-User-getUserByName-description-200" class="marked"></p>
+                            <h3 id="examples-User-getCurrentUser-title-200"></h3>
+                            <p id="examples-User-getCurrentUser-description-200" class="marked"></p>
                             <script>
-                              var responseUser200_description = `successful operation`;
+                              var responseUser200_description = `OK`;
                               var responseUser200_description_break = responseUser200_description.indexOf('\n');
                               if (responseUser200_description_break == -1) {
-                                $("#examples-User-getUserByName-title-200").text("Status: 200 - " + responseUser200_description);
+                                $("#examples-User-getCurrentUser-title-200").text("Status: 200 - " + responseUser200_description);
                               } else {
-                                $("#examples-User-getUserByName-title-200").text("Status: 200 - " + responseUser200_description.substring(0, responseUser200_description_break));
-                                $("#examples-User-getUserByName-description-200").html(responseUser200_description.substring(responseUser200_description_break));
+                                $("#examples-User-getCurrentUser-title-200").text("Status: 200 - " + responseUser200_description.substring(0, responseUser200_description_break));
+                                $("#examples-User-getCurrentUser-description-200").html(responseUser200_description.substring(responseUser200_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-User-getUserByName-200" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-User-getCurrentUser-200" class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
-                                  <a data-toggle="tab" href="#responses-User-getUserByName-200-schema">Schema</a>
+                                  <a data-toggle="tab" href="#responses-User-getCurrentUser-200-schema">Schema</a>
                                 </li>
 
 
@@ -8422,17 +8464,17 @@ The name that needs to be fetched. Use user1 for testing.
                             </ul>
 
 
-                            <div class="tab-content" id="responses-User-getUserByName-200-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-User-getUserByName-200-schema">
-                                <div id="responses-User-getUserByName-schema-200" class="exampleStyle">
+                            <div class="tab-content" id="responses-User-getCurrentUser-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-User-getCurrentUser-200-schema">
+                                <div id="responses-User-getCurrentUser-schema-200" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
-  "description" : "successful operation",
+  "description" : "OK",
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/User"
+        "$ref" : "#/components/schemas/UserResponse"
       }
     }
   }
@@ -8463,142 +8505,14 @@ The name that needs to be fetched. Use user1 for testing.
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-User-getUserByName-200-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-User-getUserByName-schema-200');
+                                      $('#responses-User-getCurrentUser-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-User-getCurrentUser-schema-200');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-User-getUserByName-200-schema-data' type='hidden' value=''></input>
-                              </div>
-                            </div>
-                            <h3 id="examples-User-getUserByName-title-400"></h3>
-                            <p id="examples-User-getUserByName-description-400" class="marked"></p>
-                            <script>
-                              var responseUser400_description = `Invalid username supplied`;
-                              var responseUser400_description_break = responseUser400_description.indexOf('\n');
-                              if (responseUser400_description_break == -1) {
-                                $("#examples-User-getUserByName-title-400").text("Status: 400 - " + responseUser400_description);
-                              } else {
-                                $("#examples-User-getUserByName-title-400").text("Status: 400 - " + responseUser400_description.substring(0, responseUser400_description_break));
-                                $("#examples-User-getUserByName-description-400").html(responseUser400_description.substring(responseUser400_description_break));
-                              }
-                            </script>
-
-
-                            <ul id="responses-detail-User-getUserByName-400" class="nav nav-tabs nav-tabs-examples" >
-
-
-                            </ul>
-
-
-                            <div class="tab-content" id="responses-User-getUserByName-400-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-User-getUserByName-400-schema">
-                                <div id="responses-User-getUserByName-schema-400" class="exampleStyle">
-                                  <script>
-                                    $(document).ready(function() {
-                                      var schemaWrapper = {
-  "description" : "Invalid username supplied"
-};
-                                      var schema = findNode('schema',schemaWrapper).schema;
-                                      if (!schema) {
-                                        schema = schemaWrapper.schema;
-                                      }
-                                      if (schema == null) {
-                                        return;
-                                      }
-                                      if (schema.$ref != null) {
-                                        schema = defsParser.$refs.get(schema.$ref);
-                                        if (schema.properties != null) {
-                                          Object.keys(schema.properties).forEach( (item) => {
-                                            if (schema.properties[item].$ref != null) {
-                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
-                                            }
-                                          });
-                                        }
-                                      } else if (schema.items != null && schema.items.$ref != null) {
-                                        schema.items = defsParser.$refs.get(schema.items.$ref);
-                                      } else {
-                                        schemaWrapper.definitions = Object.assign({}, defs);
-                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
-                                          console.log(err);
-                                        });
-                                      }
-
-                                      var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-User-getUserByName-400-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-User-getUserByName-schema-400');
-                                      result.empty();
-                                      result.append(view.render());
-                                    });
-                                  </script>
-                                </div>
-                                <input id='responses-User-getUserByName-400-schema-data' type='hidden' value=''></input>
-                              </div>
-                            </div>
-                            <h3 id="examples-User-getUserByName-title-404"></h3>
-                            <p id="examples-User-getUserByName-description-404" class="marked"></p>
-                            <script>
-                              var responseUser404_description = `User not found`;
-                              var responseUser404_description_break = responseUser404_description.indexOf('\n');
-                              if (responseUser404_description_break == -1) {
-                                $("#examples-User-getUserByName-title-404").text("Status: 404 - " + responseUser404_description);
-                              } else {
-                                $("#examples-User-getUserByName-title-404").text("Status: 404 - " + responseUser404_description.substring(0, responseUser404_description_break));
-                                $("#examples-User-getUserByName-description-404").html(responseUser404_description.substring(responseUser404_description_break));
-                              }
-                            </script>
-
-
-                            <ul id="responses-detail-User-getUserByName-404" class="nav nav-tabs nav-tabs-examples" >
-
-
-                            </ul>
-
-
-                            <div class="tab-content" id="responses-User-getUserByName-404-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-User-getUserByName-404-schema">
-                                <div id="responses-User-getUserByName-schema-404" class="exampleStyle">
-                                  <script>
-                                    $(document).ready(function() {
-                                      var schemaWrapper = {
-  "description" : "User not found"
-};
-                                      var schema = findNode('schema',schemaWrapper).schema;
-                                      if (!schema) {
-                                        schema = schemaWrapper.schema;
-                                      }
-                                      if (schema == null) {
-                                        return;
-                                      }
-                                      if (schema.$ref != null) {
-                                        schema = defsParser.$refs.get(schema.$ref);
-                                        if (schema.properties != null) {
-                                          Object.keys(schema.properties).forEach( (item) => {
-                                            if (schema.properties[item].$ref != null) {
-                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
-                                            }
-                                          });
-                                        }
-                                      } else if (schema.items != null && schema.items.$ref != null) {
-                                        schema.items = defsParser.$refs.get(schema.items.$ref);
-                                      } else {
-                                        schemaWrapper.definitions = Object.assign({}, defs);
-                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
-                                          console.log(err);
-                                        });
-                                      }
-
-                                      var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-User-getUserByName-404-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-User-getUserByName-schema-404');
-                                      result.empty();
-                                      result.append(view.render());
-                                    });
-                                  </script>
-                                </div>
-                                <input id='responses-User-getUserByName-404-schema-data' type='hidden' value=''></input>
+                                <input id='responses-User-getCurrentUser-200-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                         </article>
@@ -8608,7 +8522,7 @@ The name that needs to be fetched. Use user1 for testing.
                       <article id="api-User-loginUser-0" data-group="User" data-name="loginUser" data-version="0">
                         <div class="pull-left">
                           <h1>loginUser</h1>
-                          <p>Logs user into the system</p>
+                          <p>Authenticate user</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
@@ -8616,7 +8530,7 @@ The name that needs to be fetched. Use user1 for testing.
                         <p class="marked"></p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/user/login</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/users/login</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
@@ -8640,7 +8554,12 @@ The name that needs to be fetched. Use user1 for testing.
                           <div class="tab-pane active" id="examples-User-loginUser-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X POST \
  -H "Accept: application/json" \
- "http://petstore.swagger.io/v2/user/login?username=username_example&password=password_example"
+ -H "Content-Type: application/json" \
+ "http://petstore.swagger.io/v2/users/login" \
+ -d '{
+  &quot;password&quot; : &quot;password&quot;,
+  &quot;username&quot; : &quot;username&quot;
+}'
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-User-loginUser-0-java">
@@ -8657,11 +8576,10 @@ public class UserApiExample {
 
         // Create an instance of the API class
         UserApi apiInstance = new UserApi();
-        String username = username_example; // String | The user name for login
-        String password = password_example; // String | The password for login in clear text
+        LoginRequest loginRequest = ; // LoginRequest | 
 
         try {
-            loginUser_200_response result = apiInstance.loginUser(username, password);
+            LoginResponse result = apiInstance.loginUser(loginRequest);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#loginUser");
@@ -8677,11 +8595,10 @@ public class UserApiExample {
 
 final api_instance = DefaultApi();
 
-final String username = new String(); // String | The user name for login
-final String password = new String(); // String | The password for login in clear text
+final LoginRequest loginRequest = new LoginRequest(); // LoginRequest | 
 
 try {
-    final result = await api_instance.loginUser(username, password);
+    final result = await api_instance.loginUser(loginRequest);
     print(result);
 } catch (e) {
     print('Exception when calling DefaultApi->loginUser: $e\n');
@@ -8696,11 +8613,10 @@ try {
 public class UserApiExample {
     public static void main(String[] args) {
         UserApi apiInstance = new UserApi();
-        String username = username_example; // String | The user name for login
-        String password = password_example; // String | The password for login in clear text
+        LoginRequest loginRequest = ; // LoginRequest | 
 
         try {
-            loginUser_200_response result = apiInstance.loginUser(username, password);
+            LoginResponse result = apiInstance.loginUser(loginRequest);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#loginUser");
@@ -8718,13 +8634,11 @@ public class UserApiExample {
 
 // Create an instance of the API class
 UserApi *apiInstance = [[UserApi alloc] init];
-String *username = username_example; // The user name for login (default to null)
-String *password = password_example; // The password for login in clear text (default to null)
+LoginRequest *loginRequest = ; // 
 
-// Logs user into the system
-[apiInstance loginUserWith:username
-    password:password
-              completionHandler: ^(loginUser_200_response output, NSError* error) {
+// Authenticate user
+[apiInstance loginUserWith:loginRequest
+              completionHandler: ^(LoginResponse output, NSError* error) {
     if (output) {
         NSLog(@"%@", output);
     }
@@ -8740,8 +8654,7 @@ String *password = password_example; // The password for login in clear text (de
 
 // Create an instance of the API class
 var api = new OpenApiOrklas.UserApi()
-var username = username_example; // {String} The user name for login
-var password = password_example; // {String} The password for login in clear text
+var loginRequest = ; // {LoginRequest} 
 
 var callback = function(error, data, response) {
   if (error) {
@@ -8750,7 +8663,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.loginUser(username, password, callback);
+api.loginUser(loginRequest, callback);
 </code></pre>
                             </div>
 
@@ -8773,12 +8686,11 @@ namespace Example
 
             // Create an instance of the API class
             var apiInstance = new UserApi();
-            var username = username_example;  // String | The user name for login (default to null)
-            var password = password_example;  // String | The password for login in clear text (default to null)
+            var loginRequest = new LoginRequest(); // LoginRequest | 
 
             try {
-                // Logs user into the system
-                loginUser_200_response result = apiInstance.loginUser(username, password);
+                // Authenticate user
+                LoginResponse result = apiInstance.loginUser(loginRequest);
                 Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling UserApi.loginUser: " + e.Message );
@@ -8795,11 +8707,10 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\UserApi();
-$username = username_example; // String | The user name for login
-$password = password_example; // String | The password for login in clear text
+$loginRequest = ; // LoginRequest | 
 
 try {
-    $result = $api_instance->loginUser($username, $password);
+    $result = $api_instance->loginUser($loginRequest);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UserApi->loginUser: ', $e->getMessage(), PHP_EOL;
@@ -8814,11 +8725,10 @@ use WWW::OPenAPIClient::UserApi;
 
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::UserApi->new();
-my $username = username_example; # String | The user name for login
-my $password = password_example; # String | The password for login in clear text
+my $loginRequest = WWW::OPenAPIClient::Object::LoginRequest->new(); # LoginRequest | 
 
 eval {
-    my $result = $api_instance->loginUser(username => $username, password => $password);
+    my $result = $api_instance->loginUser(loginRequest => $loginRequest);
     print Dumper($result);
 };
 if ($@) {
@@ -8835,12 +8745,11 @@ from pprint import pprint
 
 # Create an instance of the API class
 api_instance = openapi_client.UserApi()
-username = username_example # String | The user name for login (default to null)
-password = password_example # String | The password for login in clear text (default to null)
+loginRequest =  # LoginRequest | 
 
 try:
-    # Logs user into the system
-    api_response = api_instance.login_user(username, password)
+    # Authenticate user
+    api_response = api_instance.login_user(loginRequest)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling UserApi->loginUser: %s\n" % e)</code></pre>
@@ -8850,11 +8759,10 @@ except ApiException as e:
                               <pre class="prettyprint"><code class="language-rust">extern crate UserApi;
 
 pub fn main() {
-    let username = username_example; // String
-    let password = password_example; // String
+    let loginRequest = ; // LoginRequest
 
     let mut context = UserApi::Context::default();
-    let result = client.loginUser(username, password, &context).wait();
+    let result = client.loginUser(loginRequest, &context).wait();
 
     println!("{:?}", result);
 }
@@ -8871,61 +8779,56 @@ pub fn main() {
 
 
 
-
-
-                            <div class="methodsubtabletitle">Query parameters</div>
+                            <div class="methodsubtabletitle">Body parameters</div>
                             <table id="methodsubtable">
                               <tr>
                                 <th width="150px">Name</th>
                                 <th>Description</th>
                               </tr>
-                                <tr><td style="width:150px;">username*</td>
+                                <tr><td style="width:150px;">loginRequest <span style="color:red;">*</span></td>
 <td>
+<p class="marked"></p>
+<script>
+$(document).ready(function() {
+  var schemaWrapper = {
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/LoginRequest"
+      }
+    }
+  },
+  "required" : true
+};
 
+  var schema = findNode('schema',schemaWrapper).schema;
+  if (!schema) {
+    schema = schemaWrapper.schema;
+  }
+  if (schema.$ref != null) {
+    schema = defsParser.$refs.get(schema.$ref);
+  } else if (schema.items != null && schema.items.$ref != null) {
+    schema.items = defsParser.$refs.get(schema.items.$ref);
+  } else {
+    schemaWrapper.definitions = Object.assign({}, defs);
+    $RefParser.dereference(schemaWrapper).catch(function(err) {
+      console.log(err);
+    });
+  }
 
-    <div id="d2e199_loginUser_username">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-The user name for login
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">password*</td>
-<td>
-
-
-    <div id="d2e199_loginUser_password">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-The password for login in clear text
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
+  var view = new JSONSchemaView(schema,2,{isBodyParam: true});
+  var result = $('#d2e199_loginUser_loginRequest');
+  result.empty();
+  result.append(view.render());
+});
+</script>
+<div id="d2e199_loginUser_loginRequest"></div>
 </td>
 </tr>
 
                             </table>
+
+
 
                           <h2>Responses</h2>
                             <h3 id="examples-User-loginUser-title-200"></h3>
@@ -8963,7 +8866,7 @@ The password for login in clear text
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/loginUser_200_response"
+        "$ref" : "#/components/schemas/LoginResponse"
       }
     }
   }
@@ -9004,33 +8907,33 @@ The password for login in clear text
                                 <input id='responses-User-loginUser-200-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
-                            <h3 id="examples-User-loginUser-title-400"></h3>
-                            <p id="examples-User-loginUser-description-400" class="marked"></p>
+                            <h3 id="examples-User-loginUser-title-401"></h3>
+                            <p id="examples-User-loginUser-description-401" class="marked"></p>
                             <script>
-                              var responseUser400_description = `Invalid username/password supplied`;
-                              var responseUser400_description_break = responseUser400_description.indexOf('\n');
-                              if (responseUser400_description_break == -1) {
-                                $("#examples-User-loginUser-title-400").text("Status: 400 - " + responseUser400_description);
+                              var responseUser401_description = `Invalid credentials`;
+                              var responseUser401_description_break = responseUser401_description.indexOf('\n');
+                              if (responseUser401_description_break == -1) {
+                                $("#examples-User-loginUser-title-401").text("Status: 401 - " + responseUser401_description);
                               } else {
-                                $("#examples-User-loginUser-title-400").text("Status: 400 - " + responseUser400_description.substring(0, responseUser400_description_break));
-                                $("#examples-User-loginUser-description-400").html(responseUser400_description.substring(responseUser400_description_break));
+                                $("#examples-User-loginUser-title-401").text("Status: 401 - " + responseUser401_description.substring(0, responseUser401_description_break));
+                                $("#examples-User-loginUser-description-401").html(responseUser401_description.substring(responseUser401_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-User-loginUser-400" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-User-loginUser-401" class="nav nav-tabs nav-tabs-examples" >
 
 
                             </ul>
 
 
-                            <div class="tab-content" id="responses-User-loginUser-400-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-User-loginUser-400-schema">
-                                <div id="responses-User-loginUser-schema-400" class="exampleStyle">
+                            <div class="tab-content" id="responses-User-loginUser-401-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-User-loginUser-401-schema">
+                                <div id="responses-User-loginUser-schema-401" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
-  "description" : "Invalid username/password supplied"
+  "description" : "Invalid credentials"
 };
                                       var schema = findNode('schema',schemaWrapper).schema;
                                       if (!schema) {
@@ -9058,14 +8961,14 @@ The password for login in clear text
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-User-loginUser-400-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-User-loginUser-schema-400');
+                                      $('#responses-User-loginUser-401-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-User-loginUser-schema-401');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-User-loginUser-400-schema-data' type='hidden' value=''></input>
+                                <input id='responses-User-loginUser-401-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                         </article>
@@ -9075,15 +8978,16 @@ The password for login in clear text
                       <article id="api-User-logoutUser-0" data-group="User" data-name="logoutUser" data-version="0">
                         <div class="pull-left">
                           <h1>logoutUser</h1>
-                          <p>Logs out current logged in user session</p>
+                          <p>Logout current user</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked"></p>
+                        <p class="marked">Client should discard the JWT. Server may optionally blacklist token.
+</p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/user/logout</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/users/logout</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
@@ -9107,7 +9011,7 @@ The password for login in clear text
                           <div class="tab-pane active" id="examples-User-logoutUser-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X POST \
  -H "Authorization: Bearer [[accessToken]]" \
- "http://petstore.swagger.io/v2/user/logout"
+ "http://petstore.swagger.io/v2/users/logout"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-User-logoutUser-0-java">
@@ -9186,7 +9090,7 @@ public class UserApiExample {
 // Create an instance of the API class
 UserApi *apiInstance = [[UserApi alloc] init];
 
-// Logs out current logged in user session
+// Logout current user
 [apiInstance logoutUserWithCompletionHandler: 
               ^(NSError* error) {
     if (error) {
@@ -9240,7 +9144,7 @@ namespace Example
             var apiInstance = new UserApi();
 
             try {
-                // Logs out current logged in user session
+                // Logout current user
                 apiInstance.logoutUser();
             } catch (Exception e) {
                 Debug.Print("Exception when calling UserApi.logoutUser: " + e.Message );
@@ -9302,7 +9206,7 @@ openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 api_instance = openapi_client.UserApi()
 
 try:
-    # Logs out current logged in user session
+    # Logout current user
     api_instance.logout_user()
 except ApiException as e:
     print("Exception when calling UserApi->logoutUser: %s\n" % e)</code></pre>
@@ -9335,33 +9239,33 @@ pub fn main() {
 
 
                           <h2>Responses</h2>
-                            <h3 id="examples-User-logoutUser-title-default"></h3>
-                            <p id="examples-User-logoutUser-description-default" class="marked"></p>
+                            <h3 id="examples-User-logoutUser-title-204"></h3>
+                            <p id="examples-User-logoutUser-description-204" class="marked"></p>
                             <script>
-                              var responseUserdefault_description = `successful operation`;
-                              var responseUserdefault_description_break = responseUserdefault_description.indexOf('\n');
-                              if (responseUserdefault_description_break == -1) {
-                                $("#examples-User-logoutUser-title-default").text("Status: default - " + responseUserdefault_description);
+                              var responseUser204_description = `Logged out`;
+                              var responseUser204_description_break = responseUser204_description.indexOf('\n');
+                              if (responseUser204_description_break == -1) {
+                                $("#examples-User-logoutUser-title-204").text("Status: 204 - " + responseUser204_description);
                               } else {
-                                $("#examples-User-logoutUser-title-default").text("Status: default - " + responseUserdefault_description.substring(0, responseUserdefault_description_break));
-                                $("#examples-User-logoutUser-description-default").html(responseUserdefault_description.substring(responseUserdefault_description_break));
+                                $("#examples-User-logoutUser-title-204").text("Status: 204 - " + responseUser204_description.substring(0, responseUser204_description_break));
+                                $("#examples-User-logoutUser-description-204").html(responseUser204_description.substring(responseUser204_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-User-logoutUser-default" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-User-logoutUser-204" class="nav nav-tabs nav-tabs-examples" >
 
 
                             </ul>
 
 
-                            <div class="tab-content" id="responses-User-logoutUser-default-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-User-logoutUser-default-schema">
-                                <div id="responses-User-logoutUser-schema-default" class="exampleStyle">
+                            <div class="tab-content" id="responses-User-logoutUser-204-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-User-logoutUser-204-schema">
+                                <div id="responses-User-logoutUser-schema-204" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
-  "description" : "successful operation"
+  "description" : "Logged out"
 };
                                       var schema = findNode('schema',schemaWrapper).schema;
                                       if (!schema) {
@@ -9389,14 +9293,14 @@ pub fn main() {
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-User-logoutUser-default-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-User-logoutUser-schema-default');
+                                      $('#responses-User-logoutUser-204-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-User-logoutUser-schema-204');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-User-logoutUser-default-schema-data' type='hidden' value=''></input>
+                                <input id='responses-User-logoutUser-204-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                         </article>
@@ -9406,15 +9310,15 @@ pub fn main() {
                       <article id="api-User-updateUser-0" data-group="User" data-name="updateUser" data-version="0">
                         <div class="pull-left">
                           <h1>updateUser</h1>
-                          <p>Update a user</p>
+                          <p>Update user</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">This can only be done by the logged in user.</p>
+                        <p class="marked"></p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="put"><code><span class="pln">/user/{username}</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="put"><code><span class="pln">/users/{id}</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
@@ -9438,17 +9342,14 @@ pub fn main() {
                           <div class="tab-pane active" id="examples-User-updateUser-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X PUT \
  -H "Authorization: Bearer [[accessToken]]" \
+ -H "Accept: application/json" \
  -H "Content-Type: application/json" \
- "http://petstore.swagger.io/v2/user/{username}" \
+ "http://petstore.swagger.io/v2/users/{id}" \
  -d '{
   &quot;firstName&quot; : &quot;firstName&quot;,
   &quot;lastName&quot; : &quot;lastName&quot;,
-  &quot;password&quot; : &quot;password&quot;,
-  &quot;userStatus&quot; : 6,
   &quot;phone&quot; : &quot;phone&quot;,
-  &quot;id&quot; : 0,
-  &quot;email&quot; : &quot;email&quot;,
-  &quot;username&quot; : &quot;username&quot;
+  &quot;email&quot; : &quot;email&quot;
 }'
 </code></pre>
                           </div>
@@ -9471,11 +9372,12 @@ public class UserApiExample {
 
         // Create an instance of the API class
         UserApi apiInstance = new UserApi();
-        String username = username_example; // String | name that need to be deleted
-        User user = ; // User | 
+        Integer id = 56; // Integer | 
+        UserUpdate userUpdate = ; // UserUpdate | 
 
         try {
-            apiInstance.updateUser(username, user);
+            UserResponse result = apiInstance.updateUser(id, userUpdate);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#updateUser");
             e.printStackTrace();
@@ -9490,11 +9392,11 @@ public class UserApiExample {
 
 final api_instance = DefaultApi();
 
-final String username = new String(); // String | name that need to be deleted
-final User user = new User(); // User | 
+final Integer id = new Integer(); // Integer | 
+final UserUpdate userUpdate = new UserUpdate(); // UserUpdate | 
 
 try {
-    final result = await api_instance.updateUser(username, user);
+    final result = await api_instance.updateUser(id, userUpdate);
     print(result);
 } catch (e) {
     print('Exception when calling DefaultApi->updateUser: $e\n');
@@ -9509,11 +9411,12 @@ try {
 public class UserApiExample {
     public static void main(String[] args) {
         UserApi apiInstance = new UserApi();
-        String username = username_example; // String | name that need to be deleted
-        User user = ; // User | 
+        Integer id = 56; // Integer | 
+        UserUpdate userUpdate = ; // UserUpdate | 
 
         try {
-            apiInstance.updateUser(username, user);
+            UserResponse result = apiInstance.updateUser(id, userUpdate);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#updateUser");
             e.printStackTrace();
@@ -9533,13 +9436,16 @@ public class UserApiExample {
 
 // Create an instance of the API class
 UserApi *apiInstance = [[UserApi alloc] init];
-String *username = username_example; // name that need to be deleted (default to null)
-User *user = ; // 
+Integer *id = 56; //  (default to null)
+UserUpdate *userUpdate = ; // 
 
-// Update a user
-[apiInstance updateUserWith:username
-    user:user
-              completionHandler: ^(NSError* error) {
+// Update user
+[apiInstance updateUserWith:id
+    userUpdate:userUpdate
+              completionHandler: ^(UserResponse output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
     if (error) {
         NSLog(@"Error: %@", error);
     }
@@ -9557,17 +9463,17 @@ klas_auth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new OpenApiOrklas.UserApi()
-var username = username_example; // {String} name that need to be deleted
-var user = ; // {User} 
+var id = 56; // {Integer} 
+var userUpdate = ; // {UserUpdate} 
 
 var callback = function(error, data, response) {
   if (error) {
     console.error(error);
   } else {
-    console.log('API called successfully.');
+    console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.updateUser(username, user, callback);
+api.updateUser(id, userUpdate, callback);
 </code></pre>
                             </div>
 
@@ -9592,12 +9498,13 @@ namespace Example
 
             // Create an instance of the API class
             var apiInstance = new UserApi();
-            var username = username_example;  // String | name that need to be deleted (default to null)
-            var user = new User(); // User | 
+            var id = 56;  // Integer |  (default to null)
+            var userUpdate = new UserUpdate(); // UserUpdate | 
 
             try {
-                // Update a user
-                apiInstance.updateUser(username, user);
+                // Update user
+                UserResponse result = apiInstance.updateUser(id, userUpdate);
+                Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling UserApi.updateUser: " + e.Message );
             }
@@ -9616,11 +9523,12 @@ OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('',
 
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\UserApi();
-$username = username_example; // String | name that need to be deleted
-$user = ; // User | 
+$id = 56; // Integer | 
+$userUpdate = ; // UserUpdate | 
 
 try {
-    $api_instance->updateUser($username, $user);
+    $result = $api_instance->updateUser($id, $userUpdate);
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UserApi->updateUser: ', $e->getMessage(), PHP_EOL;
 }
@@ -9637,11 +9545,12 @@ $WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::UserApi->new();
-my $username = username_example; # String | name that need to be deleted
-my $user = WWW::OPenAPIClient::Object::User->new(); # User | 
+my $id = 56; # Integer | 
+my $userUpdate = WWW::OPenAPIClient::Object::UserUpdate->new(); # UserUpdate | 
 
 eval {
-    $api_instance->updateUser(username => $username, user => $user);
+    my $result = $api_instance->updateUser(id => $id, userUpdate => $userUpdate);
+    print Dumper($result);
 };
 if ($@) {
     warn "Exception when calling UserApi->updateUser: $@\n";
@@ -9660,12 +9569,13 @@ openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 
 # Create an instance of the API class
 api_instance = openapi_client.UserApi()
-username = username_example # String | name that need to be deleted (default to null)
-user =  # User | 
+id = 56 # Integer |  (default to null)
+userUpdate =  # UserUpdate | 
 
 try:
-    # Update a user
-    api_instance.update_user(username, user)
+    # Update user
+    api_response = api_instance.update_user(id, userUpdate)
+    pprint(api_response)
 except ApiException as e:
     print("Exception when calling UserApi->updateUser: %s\n" % e)</code></pre>
                             </div>
@@ -9674,11 +9584,11 @@ except ApiException as e:
                               <pre class="prettyprint"><code class="language-rust">extern crate UserApi;
 
 pub fn main() {
-    let username = username_example; // String
-    let user = ; // User
+    let id = 56; // Integer
+    let userUpdate = ; // UserUpdate
 
     let mut context = UserApi::Context::default();
-    let result = client.updateUser(username, user, &context).wait();
+    let result = client.updateUser(id, userUpdate, &context).wait();
 
     println!("{:?}", result);
 }
@@ -9699,20 +9609,17 @@ pub fn main() {
                                   <th width="150px">Name</th>
                                   <th>Description</th>
                                 </tr>
-                                  <tr><td style="width:150px;">username*</td>
+                                  <tr><td style="width:150px;">id*</td>
 <td>
 
 
-    <div id="d2e199_updateUser_username">
+    <div id="d2e199_updateUser_id">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
-                    String
+                    Integer
                 </span>
 
-                    <div class="inner description marked">
-name that need to be deleted
-                    </div>
             </div>
                 <div class="inner required">
                     Required
@@ -9731,17 +9638,16 @@ name that need to be deleted
                                 <th width="150px">Name</th>
                                 <th>Description</th>
                               </tr>
-                                <tr><td style="width:150px;">user <span style="color:red;">*</span></td>
+                                <tr><td style="width:150px;">userUpdate <span style="color:red;">*</span></td>
 <td>
-<p class="marked">Updated user object</p>
+<p class="marked"></p>
 <script>
 $(document).ready(function() {
   var schemaWrapper = {
-  "description" : "Updated user object",
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/User"
+        "$ref" : "#/components/schemas/UserUpdate"
       }
     }
   },
@@ -9764,12 +9670,12 @@ $(document).ready(function() {
   }
 
   var view = new JSONSchemaView(schema,2,{isBodyParam: true});
-  var result = $('#d2e199_updateUser_user');
+  var result = $('#d2e199_updateUser_userUpdate');
   result.empty();
   result.append(view.render());
 });
 </script>
-<div id="d2e199_updateUser_user"></div>
+<div id="d2e199_updateUser_userUpdate"></div>
 </td>
 </tr>
 
@@ -9778,33 +9684,45 @@ $(document).ready(function() {
 
 
                           <h2>Responses</h2>
-                            <h3 id="examples-User-updateUser-title-400"></h3>
-                            <p id="examples-User-updateUser-description-400" class="marked"></p>
+                            <h3 id="examples-User-updateUser-title-200"></h3>
+                            <p id="examples-User-updateUser-description-200" class="marked"></p>
                             <script>
-                              var responseUser400_description = `Invalid user supplied`;
-                              var responseUser400_description_break = responseUser400_description.indexOf('\n');
-                              if (responseUser400_description_break == -1) {
-                                $("#examples-User-updateUser-title-400").text("Status: 400 - " + responseUser400_description);
+                              var responseUser200_description = `Updated`;
+                              var responseUser200_description_break = responseUser200_description.indexOf('\n');
+                              if (responseUser200_description_break == -1) {
+                                $("#examples-User-updateUser-title-200").text("Status: 200 - " + responseUser200_description);
                               } else {
-                                $("#examples-User-updateUser-title-400").text("Status: 400 - " + responseUser400_description.substring(0, responseUser400_description_break));
-                                $("#examples-User-updateUser-description-400").html(responseUser400_description.substring(responseUser400_description_break));
+                                $("#examples-User-updateUser-title-200").text("Status: 200 - " + responseUser200_description.substring(0, responseUser200_description_break));
+                                $("#examples-User-updateUser-description-200").html(responseUser200_description.substring(responseUser200_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-User-updateUser-400" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-User-updateUser-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-User-updateUser-200-schema">Schema</a>
+                                </li>
+
+
 
 
                             </ul>
 
 
-                            <div class="tab-content" id="responses-User-updateUser-400-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-User-updateUser-400-schema">
-                                <div id="responses-User-updateUser-schema-400" class="exampleStyle">
+                            <div class="tab-content" id="responses-User-updateUser-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-User-updateUser-200-schema">
+                                <div id="responses-User-updateUser-schema-200" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
-  "description" : "Invalid user supplied"
+  "description" : "Updated",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/UserResponse"
+      }
+    }
+  }
 };
                                       var schema = findNode('schema',schemaWrapper).schema;
                                       if (!schema) {
@@ -9832,14 +9750,78 @@ $(document).ready(function() {
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-User-updateUser-400-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-User-updateUser-schema-400');
+                                      $('#responses-User-updateUser-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-User-updateUser-schema-200');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-User-updateUser-400-schema-data' type='hidden' value=''></input>
+                                <input id='responses-User-updateUser-200-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                            <h3 id="examples-User-updateUser-title-403"></h3>
+                            <p id="examples-User-updateUser-description-403" class="marked"></p>
+                            <script>
+                              var responseUser403_description = `Forbidden`;
+                              var responseUser403_description_break = responseUser403_description.indexOf('\n');
+                              if (responseUser403_description_break == -1) {
+                                $("#examples-User-updateUser-title-403").text("Status: 403 - " + responseUser403_description);
+                              } else {
+                                $("#examples-User-updateUser-title-403").text("Status: 403 - " + responseUser403_description.substring(0, responseUser403_description_break));
+                                $("#examples-User-updateUser-description-403").html(responseUser403_description.substring(responseUser403_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-User-updateUser-403" class="nav nav-tabs nav-tabs-examples" >
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-User-updateUser-403-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-User-updateUser-403-schema">
+                                <div id="responses-User-updateUser-schema-403" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Forbidden"
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-User-updateUser-403-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-User-updateUser-schema-403');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-User-updateUser-403-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                             <h3 id="examples-User-updateUser-title-404"></h3>
