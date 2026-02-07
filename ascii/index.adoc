@@ -1,0 +1,2098 @@
+= OpenAPI Orklas
+team@openapitools.org
+1.0.0
+:toc: left
+:numbered:
+:toclevels: 4
+:source-highlighter: highlightjs
+:keywords: openapi, rest, OpenAPI Orklas
+:specDir: 
+:snippetDir: 
+:generator-template: v1 2019-12-20
+:info-url: https://openapi-generator.tech
+:app-name: OpenAPI Orklas
+
+[abstract]
+.Abstract
+This is an api spec for room reservation program.
+
+
+// markup not found, no include::{specDir}intro.adoc[opts=optional]
+
+
+== Access
+
+
+* *Bearer* Authentication 
+
+
+
+
+
+== Endpoints
+
+
+[.ClassReserve]
+=== ClassReserve
+
+
+[.reservationsGet]
+==== reservationsGet
+
+`GET /reservations`
+
+List reservations
+
+===== Description
+
+List active and future reservations of the authenticated user
+
+
+// markup not found, no include::{specDir}reservations/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+
+
+
+====== Query Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| status
+|  
+| -
+| null
+| 
+
+|===
+
+
+===== Return Type
+
+array[<<Reservation>>]
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful operation
+| List[<<Reservation>>] 
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}reservations/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}reservations/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :reservations/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}reservations/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.reservationsPost]
+==== reservationsPost
+
+`POST /reservations`
+
+Create reservation
+
+===== Description
+
+Reserve a room schedule
+
+
+// markup not found, no include::{specDir}reservations/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| ReservationsPostRequest
+|  <<ReservationsPostRequest>>
+| X
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Reservation>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 201
+| Reservation created
+|  <<Reservation>>
+
+
+| 409
+| Schedule already reserved
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}reservations/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}reservations/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :reservations/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}reservations/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.reservationsReservationIdDelete]
+==== reservationsReservationIdDelete
+
+`DELETE /reservations/{reservationId}`
+
+Cancel reservation
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}reservations/\{reservationId\}/DELETE/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| reservationId
+|  
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 204
+| Reservation cancelled
+|  <<>>
+
+
+| 403
+| Not allowed
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}reservations/\{reservationId\}/DELETE/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}reservations/\{reservationId\}/DELETE/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :reservations/{reservationId}/DELETE/DELETE.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}reservations/\{reservationId\}/DELETE/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.reservationsReservationIdStatusPatch]
+==== reservationsReservationIdStatusPatch
+
+`PATCH /reservations/{reservationId}/status`
+
+Update reservation status
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}reservations/\{reservationId\}/status/PATCH/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| reservationId
+|  
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| ReservationsReservationIdStatusPatchRequest
+|  <<ReservationsReservationIdStatusPatchRequest>>
+| X
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Status updated
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}reservations/\{reservationId\}/status/PATCH/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}reservations/\{reservationId\}/status/PATCH/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :reservations/{reservationId}/status/PATCH/PATCH.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}reservations/\{reservationId\}/status/PATCH/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.Room]
+=== Room
+
+
+[.addRoom]
+==== addRoom
+
+`POST /room`
+
+Add a new room
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}room/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Room
+| Room object <<Room>>
+| -
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<Room>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| successful operation
+|  <<Room>>
+
+
+| 401
+| Unauthenticated Operation
+|  <<>>
+
+
+| 403
+| Unauthorized Operation
+|  <<>>
+
+
+| 405
+| Invalid input
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}room/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}room/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :room/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}room/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.deleteRoom]
+==== deleteRoom
+
+`DELETE /room/{roomId}`
+
+Deletes a room
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}room/\{roomId\}/DELETE/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| roomId
+| Room id to delete 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 400
+| Invalid pet value
+|  <<>>
+
+
+| 401
+| Unauthenticated Opoeration
+|  <<>>
+
+
+| 403
+| Unauthorized Operation
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}room/\{roomId\}/DELETE/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}room/\{roomId\}/DELETE/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :room/{roomId}/DELETE/DELETE.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}room/\{roomId\}/DELETE/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.getRoomById]
+==== getRoomById
+
+`GET /room/{roomId}`
+
+Find room by ID
+
+===== Description
+
+Returns a single room
+
+
+// markup not found, no include::{specDir}room/\{roomId\}/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| roomId
+| ID of room to return 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<Room>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| successful operation
+|  <<Room>>
+
+
+| 400
+| Invalid ID supplied
+|  <<>>
+
+
+| 404
+| Pet not found
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}room/\{roomId\}/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}room/\{roomId\}/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :room/{roomId}/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}room/\{roomId\}/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.listRooms]
+==== listRooms
+
+`GET /rooms`
+
+List rooms
+
+===== Description
+
+List rooms with optional filtering by status and tags. Filters can be combined. 
+
+
+// markup not found, no include::{specDir}rooms/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+
+
+
+====== Query Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| status
+| Filter rooms by status <<String>>
+| -
+| null
+| 
+
+| tagIds
+| Filter rooms by tag IDs <<Long>>
+| -
+| null
+| 
+
+|===
+
+
+===== Return Type
+
+array[<<Room>>]
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful operation
+| List[<<Room>>] 
+
+
+| 400
+| Invalid filter value
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}rooms/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}rooms/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :rooms/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}rooms/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.updateRoomWithForm]
+==== updateRoomWithForm
+
+`POST /room/{roomId}`
+
+Updates a room with form data
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}room/\{roomId\}/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| roomId
+| ID of room that needs to be updated 
+| X
+| null
+| 
+
+|===
+
+
+====== Form Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| name
+| Updated Name of the room <<string>>
+| -
+| null
+| 
+
+| tags
+| Updated Tags of the room <<String>>
+| -
+| null
+| 
+
+|===
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 401
+| Unauthenticated Operation
+|  <<>>
+
+
+| 403
+| Unauthorized Operation
+|  <<>>
+
+
+| 405
+| Invalid input
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}room/\{roomId\}/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}room/\{roomId\}/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :room/{roomId}/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}room/\{roomId\}/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.uploadFile]
+==== uploadFile
+
+`POST /room/{roomId}/uploadImage`
+
+uploads an image
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}room/\{roomId\}/uploadImage/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| roomId
+| ID of pet to update 
+| X
+| null
+| 
+
+|===
+
+
+====== Form Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| additionalMetadata
+| Additional data to pass to server <<string>>
+| -
+| null
+| 
+
+| file
+| file to upload <<file>>
+| -
+| null
+| 
+
+|===
+
+
+
+
+===== Return Type
+
+<<ApiResponse>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| successful operation
+|  <<ApiResponse>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}room/\{roomId\}/uploadImage/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}room/\{roomId\}/uploadImage/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :room/{roomId}/uploadImage/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}room/\{roomId\}/uploadImage/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.Schedule]
+=== Schedule
+
+
+[.roomsRoomIdSchedulesGet]
+==== roomsRoomIdSchedulesGet
+
+`GET /rooms/{roomId}/schedules`
+
+List room schedules
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}rooms/\{roomId\}/schedules/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| roomId
+|  
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+array[<<Schedule>>]
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| List of schedules
+| List[<<Schedule>>] 
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}rooms/\{roomId\}/schedules/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}rooms/\{roomId\}/schedules/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :rooms/{roomId}/schedules/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}rooms/\{roomId\}/schedules/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.roomsRoomIdSchedulesPost]
+==== roomsRoomIdSchedulesPost
+
+`POST /rooms/{roomId}/schedules`
+
+Create room schedule
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}rooms/\{roomId\}/schedules/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| roomId
+|  
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| Schedule
+|  <<Schedule>>
+| X
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 201
+| Schedule created
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}rooms/\{roomId\}/schedules/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}rooms/\{roomId\}/schedules/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :rooms/{roomId}/schedules/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}rooms/\{roomId\}/schedules/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.schedulesScheduleIdDelete]
+==== schedulesScheduleIdDelete
+
+`DELETE /schedules/{scheduleId}`
+
+Delete schedule
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}schedules/\{scheduleId\}/DELETE/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| scheduleId
+|  
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 204
+| Schedule deleted
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}schedules/\{scheduleId\}/DELETE/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}schedules/\{scheduleId\}/DELETE/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :schedules/{scheduleId}/DELETE/DELETE.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}schedules/\{scheduleId\}/DELETE/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.User]
+=== User
+
+
+[.createUser]
+==== createUser
+
+`POST /user`
+
+Create user
+
+===== Description
+
+User account registration.
+
+
+// markup not found, no include::{specDir}user/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| User
+| Created user object <<User>>
+| X
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 0
+| successful operation
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}user/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}user/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :user/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}user/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.deleteUser]
+==== deleteUser
+
+`DELETE /user/{username}`
+
+Delete user
+
+===== Description
+
+This can only be done by the logged in user.
+
+
+// markup not found, no include::{specDir}user/\{username\}/DELETE/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| username
+| The name that needs to be deleted 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 400
+| Invalid username supplied
+|  <<>>
+
+
+| 404
+| User not found
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}user/\{username\}/DELETE/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}user/\{username\}/DELETE/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :user/{username}/DELETE/DELETE.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}user/\{username\}/DELETE/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.getUserByName]
+==== getUserByName
+
+`GET /user/{username}`
+
+Get user by user name
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}user/\{username\}/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| username
+| The name that needs to be fetched. Use user1 for testing. 
+| X
+| null
+| 
+
+|===
+
+
+
+
+
+
+===== Return Type
+
+<<User>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| successful operation
+|  <<User>>
+
+
+| 400
+| Invalid username supplied
+|  <<>>
+
+
+| 404
+| User not found
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}user/\{username\}/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}user/\{username\}/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :user/{username}/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}user/\{username\}/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.loginUser]
+==== loginUser
+
+`POST /user/login`
+
+Logs user into the system
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}user/login/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+
+
+
+====== Query Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| username
+| The user name for login 
+| X
+| null
+| /^[a-zA-Z0-9]+[a-zA-Z0-9\.\-_]*[a-zA-Z0-9]+$/
+
+| password
+| The password for login in clear text 
+| X
+| null
+| 
+
+|===
+
+
+===== Return Type
+
+<<loginUser_200_response>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Login successful
+|  <<loginUser_200_response>>
+
+
+| 400
+| Invalid username/password supplied
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}user/login/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}user/login/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :user/login/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}user/login/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.logoutUser]
+==== logoutUser
+
+`POST /user/logout`
+
+Logs out current logged in user session
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}user/logout/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 0
+| successful operation
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}user/logout/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}user/logout/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :user/logout/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}user/logout/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.updateUser]
+==== updateUser
+
+`PUT /user/{username}`
+
+Update a user
+
+===== Description
+
+This can only be done by the logged in user.
+
+
+// markup not found, no include::{specDir}user/\{username\}/PUT/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+====== Path Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| username
+| name that need to be deleted 
+| X
+| null
+| 
+
+|===
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| User
+| Updated user object <<User>>
+| X
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+
+
+-
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 400
+| Invalid user supplied
+|  <<>>
+
+
+| 404
+| User not found
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}user/\{username\}/PUT/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}user/\{username\}/PUT/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :user/{username}/PUT/PUT.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}user/\{username\}/PUT/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[#models]
+== Models
+
+
+[#ApiResponse]
+=== _ApiResponse_ An uploaded response
+
+Describes the result of uploading an image resource
+
+
+[.fields-ApiResponse]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| code
+| 
+| 
+|   Integer  
+| 
+| int32    
+
+| type
+| 
+| 
+|   String  
+| 
+|     
+
+| message
+| 
+| 
+|   String  
+| 
+|     
+
+|===
+
+
+
+[#LoginUser200Response]
+=== _LoginUser200Response_ 
+
+
+
+
+[.fields-LoginUser200Response]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| accessToken
+| 
+| 
+|   String  
+| JWT access token
+|     
+
+|===
+
+
+
+[#Reservation]
+=== _Reservation_ Room Reservation
+
+A reservation request for a room schedule
+
+
+[.fields-Reservation]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| id
+| 
+| 
+|   Long  
+| 
+| int64    
+
+| schedId
+| X
+| 
+|   Long  
+| 
+| int64    
+
+| userId
+| 
+| 
+|   Long  
+| 
+| int64    
+
+| status
+| X
+| 
+|  <<String>>  
+| 
+|  _Enum:_ waiting, denied, accepted,  
+
+|===
+
+
+
+[#ReservationsPostRequest]
+=== _ReservationsPostRequest_ 
+
+
+
+
+[.fields-ReservationsPostRequest]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| schedId
+| X
+| 
+|   Long  
+| 
+| int64    
+
+|===
+
+
+
+[#ReservationsReservationIdStatusPatchRequest]
+=== _ReservationsReservationIdStatusPatchRequest_ 
+
+
+
+
+[.fields-ReservationsReservationIdStatusPatchRequest]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| status
+| X
+| 
+|  <<String>>  
+| 
+|  _Enum:_ accepted, denied,  
+
+|===
+
+
+
+[#Room]
+=== _Room_ Room entity
+
+A Room for user to reserve
+
+
+[.fields-Room]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| id
+| 
+| 
+|   Long  
+| 
+| int64    
+
+| name
+| X
+| 
+|   String  
+| Room name
+|     
+
+| status
+| 
+| 
+|  <<String>>  
+| Order Status
+|  _Enum:_ reserved, closed, open,  
+
+| roomType
+| X
+| 
+|  <<String>>  
+| Room Type
+|  _Enum:_ class, laboratory, theater,  
+
+| photoUrls
+| X
+| 
+|   List   of <<string>>
+| 
+|     
+
+| tagIds
+| X
+| 
+|   List   of <<long>>
+| 
+| int64    
+
+|===
+
+
+
+[#Schedule]
+=== _Schedule_ Room Schedule
+
+Time slot when a room is available
+
+
+[.fields-Schedule]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| id
+| 
+| 
+|   Long  
+| 
+| int64    
+
+| roomId
+| X
+| 
+|   Long  
+| 
+| int64    
+
+| startTime
+| X
+| 
+|   Date  
+| 
+| date-time    
+
+| endTime
+| X
+| 
+|   Date  
+| 
+| date-time    
+
+|===
+
+
+
+[#Tag]
+=== _Tag_ Room Tag
+
+A tag for a room
+
+
+[.fields-Tag]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| id
+| 
+| 
+|   Long  
+| 
+| int64    
+
+| name
+| 
+| 
+|   String  
+| 
+|     
+
+|===
+
+
+
+[#User]
+=== _User_ a User
+
+A User who is purchasing from the pet store
+
+
+[.fields-User]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| id
+| 
+| 
+|   Long  
+| 
+| int64    
+
+| username
+| 
+| 
+|   String  
+| 
+|     
+
+| firstName
+| 
+| 
+|   String  
+| 
+|     
+
+| lastName
+| 
+| 
+|   String  
+| 
+|     
+
+| email
+| 
+| 
+|   String  
+| 
+|     
+
+| password
+| 
+| 
+|   String  
+| 
+|     
+
+| phone
+| 
+| 
+|   String  
+| 
+|     
+
+| userStatus
+| 
+| 
+|   Integer  
+| User Status
+| int32    
+
+|===
+
+
+

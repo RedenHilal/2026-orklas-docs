@@ -1,0 +1,667 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://petstore.swagger.io/v2'
+info:
+  description: >-
+    This is an api spec for room reservation program.
+  version: 1.0.0
+  title: OpenAPI Orklas
+  license:
+    name: "Zlib License"
+tags:
+  - name: user
+    description: Account to do operation on room
+  - name: room
+    description: Subject of reserve
+  - name: classReserve
+    description: Represent a single book operation of a room
+  - name: schedule
+    description: Possible booking time of a room
+paths:
+  /room:
+    post:
+      tags:
+        - room
+      summary: Add a new room
+      description: ''
+      operationId: addRoom
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '401':
+          description: Unauthenticated Operation
+        '403':
+          description: Unauthorized Operation
+        '405':
+          description: Invalid input
+      security:
+        - klas_auth: []
+      requestBody:
+        $ref: '#/components/requestBodies/Room'
+  /rooms:
+    get:
+     tags: [room]
+     summary: List rooms
+     description: >
+       List rooms with optional filtering by status and tags.
+       Filters can be combined.
+     operationId: listRooms
+     parameters:
+       - name: status
+         in: query
+         description: Filter rooms by status
+         required: false
+         style: form
+         explode: false
+         schema:
+           type: array
+           items:
+             type: string
+             enum:
+               - reserved
+               - closed
+               - open
+
+       - name: tagIds
+         in: query
+         description: Filter rooms by tag IDs
+         required: false
+         style: form
+         explode: false
+         schema:
+           type: array
+           items:
+             type: integer
+             format: int64
+
+     responses:
+       '200':
+         description: Successful operation
+         content:
+           application/json:
+             schema:
+               type: array
+               items:
+                 $ref: '#/components/schemas/Room'
+       '400':
+         description: Invalid filter value
+     security:
+       - klas_auth: []
+
+  '/room/{roomId}':
+    get:
+      tags:
+        - room
+      summary: Find room by ID
+      description: Returns a single room
+      operationId: getRoomById
+      parameters:
+        - name: roomId
+          in: path
+          description: ID of room to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+      security:
+        - klas_auth: []
+    post:
+      tags:
+        - room
+      summary: Updates a room with form data
+      description: ''
+      operationId: updateRoomWithForm
+      parameters:
+        - name: roomId
+          in: path
+          description: ID of room that needs to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Unauthenticated Operation
+        '403':
+          description: Unauthorized Operation
+        '405':
+          description: Invalid input
+      security:
+        - klas_auth: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Updated Name of the room
+                  type: string
+                tags:
+                  description: Updated Tags of the room
+                  type: array
+                  items: 
+                    type: string
+            
+    delete:
+      tags:
+        - room
+      summary: Deletes a room
+      description: ''
+      operationId: deleteRoom
+      parameters:
+        - name: roomId
+          in: path
+          description: Room id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid pet value
+        '401':
+          description: Unauthenticated Opoeration
+        '403':
+          description: Unauthorized Operation
+      security:
+        - klas_auth: []
+  '/room/{roomId}/uploadImage':
+    post:
+      tags:
+        - room
+      summary: uploads an image
+      description: ''
+      operationId: uploadFile
+      parameters:
+        - name: roomId
+          in: path
+          description: ID of pet to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+        - klas_auth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                additionalMetadata:
+                  description: Additional data to pass to server
+                  type: string
+                file:
+                  description: file to upload
+                  type: string
+                  format: binary
+
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: User account registration.
+      operationId: createUser
+      responses:
+        default:
+          description: successful operation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Created user object
+        required: true
+      security:
+        - klas_auth: []
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: true
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9]+[a-zA-Z0-9\.\-_]*[a-zA-Z0-9]+$'
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: JWT access token
+        '400':
+          description: Invalid username/password supplied
+  /user/logout:
+    post:
+      tags:
+        - user
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      responses:
+        default:
+          description: successful operation
+      security:
+        - klas_auth: []
+  '/user/{username}':
+    get:
+      tags:
+        - user
+      summary: Get user by user name
+      description: ''
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be fetched. Use user1 for testing.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+      security:
+        - klas_auth: []
+    put:
+      tags:
+        - user
+      summary: Update a user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid user supplied
+        '404':
+          description: User not found
+      security:
+        - klas_auth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Updated user object
+        required: true
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+      security:
+        - klas_auth: []
+  /reservations:
+    get:
+      tags: [classReserve]
+      summary: List reservations
+      description: List active and future reservations of the authenticated user
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [waiting, accepted, denied]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+      security:
+        - klas_auth: []
+    post:
+      tags: [classReserve]
+      summary: Create reservation
+      description: Reserve a room schedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - schedId
+              properties:
+                schedId:
+                  type: integer
+                  format: int64
+      responses:
+        '201':
+          description: Reservation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '409':
+          description: Schedule already reserved
+      security:
+        - klas_auth: []
+
+  '/reservations/{reservationId}':
+    delete:
+      tags: [classReserve]
+      summary: Cancel reservation
+      parameters:
+        - name: reservationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Reservation cancelled
+        '403':
+          description: Not allowed
+      security:
+        - klas_auth: []
+  /reservations/{reservationId}/status:
+    patch:
+      tags: [classReserve]
+      summary: Update reservation status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [accepted, denied]
+      parameters:
+        - name: reservationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Status updated
+      security:
+        - klas_auth: []
+  /rooms/{roomId}/schedules:
+    parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+    get:
+      tags: [schedule]
+      summary: List room schedules
+      responses:
+        '200':
+          description: List of schedules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Schedule'
+    post:
+      tags: [schedule]
+      summary: Create room schedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schedule'
+      responses:
+        '201':
+          description: Schedule created
+      security:
+        - klas_auth: []
+  /schedules/{scheduleId}:
+    delete:
+      tags: [schedule]
+      summary: Delete schedule
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Schedule deleted
+      security:
+        - klas_auth: []
+
+
+
+components:
+  requestBodies:
+    User:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+      description: Pet object that needs to be added to the store
+      required: true
+    Room:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Room'
+      description: Room object
+  securitySchemes:
+    klas_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Room:
+      title: Room entity
+      description: A Room for user to reserve
+      type: object
+      required:
+        - name
+        - photoUrls
+        - tagIds
+        - roomType
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          description: Room name
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - reserved
+            - closed
+            - open
+        roomType:
+          type: string
+          description: Room Type
+          enum:
+            - class
+            - laboratory
+            - theater
+        photoUrls:
+          type: array
+          items:
+            type: string
+        tagIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+
+    Reservation:
+     title: Room Reservation
+     description: A reservation request for a room schedule
+     type: object
+     required:
+       - schedId
+       - status
+     properties:
+       id:
+         type: integer
+         format: int64
+       schedId:
+         type: integer
+         format: int64
+       userId:
+         type: integer
+         format: int64
+       status:
+         type: string
+         enum:
+           - waiting
+           - denied
+           - accepted
+
+
+    Schedule:
+      title: Room Schedule
+      description: Time slot when a room is available
+      type: object
+      required:
+        - roomId
+        - startTime
+        - endTime
+      properties:
+        id:
+          type: integer
+          format: int64
+        roomId:
+          type: integer
+          format: int64
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+
+
+    User:
+      title: a User
+      description: A User who is purchasing from the pet store
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+          format: int32
+          description: User Status
+    Tag:
+      title: Room Tag
+      description: A tag for a room
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    ApiResponse:
+      title: An uploaded response
+      description: Describes the result of uploading an image resource
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+
