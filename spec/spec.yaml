@@ -38,6 +38,28 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         '409':
           description: Username or email already exists
+  /users/special:
+    post:
+      tags: [user]
+      summary: Register a new user with role support
+      operationId: createUserSpecial
+      security:
+        - klas_auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateSpecial'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '409':
+          description: Username or email already exists
   /users/login:
     post:
       tags: [user]
@@ -529,6 +551,26 @@ components:
           type: string
         phone:
           type: string
+    UserCreateSpecial:
+      type: object
+      required: [username, email, password, role]
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRole'
     UserUpdate:
       type: object
       properties:
@@ -578,19 +620,9 @@ components:
           type: string
           description: Room name
         status:
-          type: string
-          description: Order Status
-          enum:
-            - reserved
-            - closed
-            - open
+          $ref: '#/components/schemas/RoomStatus'
         roomType:
-          type: string
-          description: Room Type
-          enum:
-            - class
-            - laboratory
-            - theater
+          $ref: '#/components/schemas/RoomType'
         photoUrls:
           type: array
           items:
@@ -600,6 +632,22 @@ components:
           items:
             type: integer
             format: int64
+    RoomStatus:
+      title: Status of a room
+      description: Status describes availablity of a room, wheter it's available to use, reserve, or neither
+      type: string
+      enum:
+        - reserved
+        - closed
+        - open
+    RoomType:
+      title: Type of a room
+      description: Yes, it's a type of a room
+      type: string
+      enum:
+        - class
+        - laboratory
+        - theater
 
     Reservation:
      title: Room Reservation
@@ -619,12 +667,18 @@ components:
          type: integer
          format: int64
        status:
-         type: string
-         enum:
-           - waiting
-           - denied
-           - accepted
+        $ref: '#/components/schemas/ReservationStatus'
+       description:
+          type: string
 
+    ReservationStatus:
+      title: Room Reservation Status
+      description: Status of a Room Reservation
+      type: string
+      enum:
+        - waiting
+        - denied
+        - accepted
 
     Schedule:
       title: Room Schedule
@@ -672,6 +726,17 @@ components:
           type: integer
           format: int32
           description: User Status
+        role:
+          $ref: '#/components/schemas/UserRole'
+    
+    UserRole:
+      title: Role for a User
+      description: Role is used to define authority of a user
+      type: string
+      enum:
+        - student
+        - lecturer
+        - administrator
     Tag:
       title: Room Tag
       description: A tag for a room
@@ -681,6 +746,8 @@ components:
           type: integer
           format: int64
         name:
+          type: string
+        description:
           type: string
 
     ApiResponse:
@@ -695,5 +762,6 @@ components:
           type: string
         message:
           type: string
+
 
 
