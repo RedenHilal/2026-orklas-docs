@@ -1319,6 +1319,93 @@ ifdef::internal-generation[]
 endif::internal-generation[]
 
 
+[.createUserSpecial]
+==== createUserSpecial
+
+`POST /users/special`
+
+Register a new user with role support
+
+===== Description
+
+
+
+
+// markup not found, no include::{specDir}users/special/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+====== Body Parameter
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| UserCreateSpecial
+|  <<UserCreateSpecial>>
+| X
+| 
+| 
+
+|===
+
+
+
+
+
+===== Return Type
+
+<<UserResponse>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 201
+| User created
+|  <<UserResponse>>
+
+
+| 409
+| Username or email already exists
+|  <<>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}users/special/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}users/special/POST/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :users/special/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}users/special/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
 [.deleteUser]
 ==== deleteUser
 
@@ -1867,12 +1954,39 @@ A reservation request for a room schedule
 | status
 | X
 | 
-|  <<String>>  
+|  <<ReservationStatus>>  
 | 
-|  _Enum:_ waiting, denied, accepted,  
+|    waiting, denied, accepted,  
+
+| description
+| 
+| 
+|   String  
+| 
+|     
 
 |===
 
+
+
+[#ReservationStatus]
+=== _ReservationStatus_ Room Reservation Status
+
+Status of a Room Reservation
+
+
+
+
+[.fields-ReservationStatus]
+[cols="1"]
+|===
+| Enum Values
+
+| waiting
+| denied
+| accepted
+
+|===
 
 
 [#ReservationsPostRequest]
@@ -1947,16 +2061,16 @@ A Room for user to reserve
 | status
 | 
 | 
-|  <<String>>  
-| Order Status
-|  _Enum:_ reserved, closed, open,  
+|  <<RoomStatus>>  
+| 
+|    reserved, closed, open,  
 
 | roomType
 | X
 | 
-|  <<String>>  
-| Room Type
-|  _Enum:_ class, laboratory, theater,  
+|  <<RoomType>>  
+| 
+|    class, laboratory, theater,  
 
 | photoUrls
 | X
@@ -1974,6 +2088,46 @@ A Room for user to reserve
 
 |===
 
+
+
+[#RoomStatus]
+=== _RoomStatus_ Status of a room
+
+Status describes availablity of a room, wheter it&#39;s available to use, reserve, or neither
+
+
+
+
+[.fields-RoomStatus]
+[cols="1"]
+|===
+| Enum Values
+
+| reserved
+| closed
+| open
+
+|===
+
+
+[#RoomType]
+=== _RoomType_ Type of a room
+
+Yes, it&#39;s a type of a room
+
+
+
+
+[.fields-RoomType]
+[cols="1"]
+|===
+| Enum Values
+
+| class
+| laboratory
+| theater
+
+|===
 
 
 [#Schedule]
@@ -2038,6 +2192,13 @@ A tag for a room
 | int64    
 
 | name
+| 
+| 
+|   String  
+| 
+|     
+
+| description
 | 
 | 
 |   String  
@@ -2115,6 +2276,13 @@ A User who is purchasing from the pet store
 | User Status
 | int32    
 
+| role
+| 
+| 
+|  <<UserRole>>  
+| 
+|    student, lecturer, administrator,  
+
 |===
 
 
@@ -2171,6 +2339,70 @@ A User who is purchasing from the pet store
 |   String  
 | 
 |     
+
+|===
+
+
+
+[#UserCreateSpecial]
+=== _UserCreateSpecial_ 
+
+
+
+
+[.fields-UserCreateSpecial]
+[cols="2,1,1,2,4,1"]
+|===
+| Field Name| Required| Nullable | Type| Description | Format
+
+| username
+| X
+| 
+|   String  
+| 
+|     
+
+| email
+| X
+| 
+|   String  
+| 
+| email    
+
+| password
+| X
+| 
+|   String  
+| 
+| password    
+
+| firstName
+| 
+| 
+|   String  
+| 
+|     
+
+| lastName
+| 
+| 
+|   String  
+| 
+|     
+
+| phone
+| 
+| 
+|   String  
+| 
+|     
+
+| role
+| X
+| 
+|  <<UserRole>>  
+| 
+|    student, lecturer, administrator,  
 
 |===
 
@@ -2238,6 +2470,26 @@ A User who is purchasing from the pet store
 
 |===
 
+
+
+[#UserRole]
+=== _UserRole_ Role for a User
+
+Role is used to define authority of a user
+
+
+
+
+[.fields-UserRole]
+[cols="1"]
+|===
+| Enum Values
+
+| student
+| lecturer
+| administrator
+
+|===
 
 
 [#UserUpdate]
