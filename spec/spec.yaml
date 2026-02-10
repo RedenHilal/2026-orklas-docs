@@ -152,245 +152,255 @@ paths:
       responses:
         '204':
           description: Deleted
-  /room:
-    post:
-      tags:
-        - room
-      summary: Add a new room
-      description: ''
-      operationId: addRoom
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Room'
-        '401':
-          description: Unauthenticated Operation
-        '403':
-          description: Unauthorized Operation
-        '405':
-          description: Invalid input
-      security:
-        - klas_auth: []
-      requestBody:
-        $ref: '#/components/requestBodies/Room'
   /rooms:
-    get:
-     tags: [room]
-     summary: List rooms
-     description: >
-       List rooms with optional filtering by status and tags.
-       Filters can be combined.
-     operationId: listRooms
-     parameters:
-       - name: status
-         in: query
-         description: Filter rooms by status
-         required: false
-         style: form
-         explode: false
-         schema:
-           type: array
-           items:
-             type: string
-             enum:
-               - reserved
-               - closed
-               - open
-
-       - name: tagIds
-         in: query
-         description: Filter rooms by tag IDs
-         required: false
-         style: form
-         explode: false
-         schema:
-           type: array
-           items:
-             type: integer
-             format: int64
-
-     responses:
-       '200':
-         description: Successful operation
-         content:
-           application/json:
-             schema:
-               type: array
-               items:
-                 $ref: '#/components/schemas/Room'
-       '400':
-         description: Invalid filter value
-     security:
-       - klas_auth: []
-
-  '/room/{roomId}':
-    get:
-      tags:
-        - room
-      summary: Find room by ID
-      description: Returns a single room
-      operationId: getRoomById
-      parameters:
-        - name: roomId
-          in: path
-          description: ID of room to return
-          required: true
-          schema:
-            type: integer
-            format: int64
+    post:
+      tags: [room]
+      summary: Create a new room
+      operationId: createRoom
+      security:
+        - klas_auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomCreate'
       responses:
-        '200':
-          description: successful operation
+        '201':
+          description: Room created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Room'
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-      security:
-        - klas_auth: []
-    post:
-      tags:
-        - room
-      summary: Updates a room with form data
-      description: ''
-      operationId: updateRoomWithForm
-      parameters:
-        - name: roomId
-          in: path
-          description: ID of room that needs to be updated
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
+          description: Validation error
         '401':
-          description: Unauthenticated Operation
+          description: Unauthenticated
         '403':
-          description: Unauthorized Operation
-        '405':
-          description: Invalid input
-      security:
-        - klas_auth: []
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                name:
-                  description: Updated Name of the room
-                  type: string
-                tags:
-                  description: Updated Tags of the room
-                  type: array
-                  items: 
-                    type: string
-            
-    delete:
-      tags:
-        - room
-      summary: Deletes a room
-      description: ''
-      operationId: deleteRoom
-      parameters:
-        - name: roomId
-          in: path
-          description: Room id to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '400':
-          description: Invalid pet value
-        '401':
-          description: Unauthenticated Opoeration
-        '403':
-          description: Unauthorized Operation
-      security:
-        - klas_auth: []
-  '/room/{roomId}/uploadImage':
-    post:
-      tags:
-        - room
-      summary: uploads an image
-      description: ''
-      operationId: uploadFile
-      parameters:
-        - name: roomId
-          in: path
-          description: ID of pet to update
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-      security:
-        - klas_auth: []
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                additionalMetadata:
-                  description: Additional data to pass to server
-                  type: string
-                file:
-                  description: file to upload
-                  type: string
-                  format: binary
-  /reservations:
+          description: Unauthorized
+  
     get:
-      tags: [classReserve]
-      summary: List reservations
-      description: List active and future reservations of the authenticated user
+      tags: [room]
+      summary: List rooms
+      description: List rooms with optional filters, pagination, and sorting
+      operationId: listRooms
+      security:
+        - klas_auth: []
       parameters:
         - name: status
           in: query
-          required: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/RoomStatus'
+          style: form
+          explode: false
+  
+        - name: tagIds
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: false
+  
+        - name: roomType
+          in: query
+          schema:
+            $ref: '#/components/schemas/RoomType'
+  
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+  
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+  
+        - name: sort
+          in: query
+          description: Sort by field (prefix with - for descending)
           schema:
             type: string
-            enum: [waiting, accepted, denied]
+            example: "-name"
+  
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Reservation'
+                $ref: '#/components/schemas/RoomListResponse'
+        '400':
+          description: Invalid query parameters
+  /rooms/{roomId}:
+    get:
+      tags: [room]
+      summary: Get room by ID
+      operationId: getRoomById
       security:
         - klas_auth: []
-    post:
-      tags: [classReserve]
-      summary: Create reservation
-      description: Reserve a room schedule
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '400':
+          description: Invalid ID
+        '404':
+          description: Room not found
+  
+    patch:
+      tags: [room]
+      summary: Update room fields
+      operationId: updateRoom
+      security:
+        - klas_auth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
+              $ref: '#/components/schemas/RoomUpdate'
+      responses:
+        '200':
+          description: Room updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '400':
+          description: Validation error
+        '404':
+          description: Room not found
+  
+    delete:
+      tags: [room]
+      summary: Delete a room
+      operationId: deleteRoom
+      security:
+        - klas_auth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Room deleted
+        '404':
+          description: Room not found
+  /rooms/{roomId}/images:
+    post:
+      tags: [room]
+      summary: Upload room image
+      operationId: uploadRoomImage
+      security:
+        - klas_auth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
               type: object
-              required:
-                - schedId
+              required: [file]
               properties:
-                schedId:
-                  type: integer
-                  format: int64
+                file:
+                  type: string
+                  format: binary
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Image uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomImage'
+  /reservations:
+    get:
+      tags: [reservation]
+      summary: List user reservations
+      description: List active and future reservations of the authenticated user
+      operationId: listMyReservations
+      security:
+        - klas_auth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ReservationStatus'
+        - name: from
+          in: query
+          description: Filter reservations starting from this date
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationListResponse'
+    post:
+      tags: [reservation]
+      summary: Create reservation
+      description: Request a reservation for a room schedule
+      operationId: createReservation
+      security:
+        - klas_auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationCreate'
       responses:
         '201':
           description: Reservation created
@@ -399,14 +409,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Reservation'
         '409':
-          description: Schedule already reserved
+          description: Schedule already reserved or overlapping
+  /reservations/{reservationId}:
+    delete:
+      tags: [reservation]
+      summary: Cancel reservation
+      description: Only allowed for owner while status is waiting
+      operationId: cancelReservation
       security:
         - klas_auth: []
-
-  '/reservations/{reservationId}':
-    delete:
-      tags: [classReserve]
-      summary: Cancel reservation
       parameters:
         - name: reservationId
           in: path
@@ -419,24 +430,16 @@ paths:
           description: Reservation cancelled
         '403':
           description: Not allowed
-      security:
-        - klas_auth: []
+        '404':
+          description: Reservation not found
   /reservations/{reservationId}/status:
     patch:
-      tags: [classReserve]
+      tags: [reservation-admin]
       summary: Update reservation status
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - status
-              properties:
-                status:
-                  type: string
-                  enum: [accepted, denied]
+      description: Accept or deny a reservation (admin only)
+      operationId: updateReservationStatus
+      security:
+        - klas_auth: []
       parameters:
         - name: reservationId
           in: path
@@ -444,22 +447,42 @@ paths:
           schema:
             type: integer
             format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationStatusUpdate'
       responses:
         '200':
           description: Status updated
-      security:
-        - klas_auth: []
+        '409':
+          description: Invalid status transition
   /rooms/{roomId}/schedules:
     parameters:
-        - name: roomId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+  
     get:
       tags: [schedule]
       summary: List room schedules
+      description: Includes availability info
+      operationId: listRoomSchedules
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: List of schedules
@@ -469,24 +492,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Schedule'
+  
     post:
       tags: [schedule]
       summary: Create room schedule
+      operationId: createSchedule
+      security:
+        - klas_auth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Schedule'
+              $ref: '#/components/schemas/ScheduleCreate'
       responses:
         '201':
           description: Schedule created
-      security:
-        - klas_auth: []
+        '409':
+          description: Time overlap detected
   /schedules/{scheduleId}:
     delete:
       tags: [schedule]
       summary: Delete schedule
+      description: Cannot delete schedule with accepted reservations
+      operationId: deleteSchedule
+      security:
+        - klas_auth: []
       parameters:
         - name: scheduleId
           in: path
@@ -497,9 +528,9 @@ paths:
       responses:
         '204':
           description: Schedule deleted
-      security:
-        - klas_auth: []
-
+        '409':
+          description: Schedule is reserved
+  
 components:
   requestBodies:
     Room:
@@ -604,21 +635,18 @@ components:
           type: integer
           description: Token lifetime in seconds
     Room:
-      title: Room entity
-      description: A Room for user to reserve
+      title: Room
+      description: A reservable room
       type: object
-      required:
-        - name
-        - photoUrls
-        - tagIds
-        - roomType
+      required: [id, name, status, roomType, photoUrls, tagIds]
       properties:
         id:
           type: integer
           format: int64
         name:
           type: string
-          description: Room name
+          minLength: 1
+          maxLength: 100
         status:
           $ref: '#/components/schemas/RoomStatus'
         roomType:
@@ -627,11 +655,65 @@ components:
           type: array
           items:
             type: string
+            format: uri
         tagIds:
           type: array
           items:
             type: integer
             format: int64
+    RoomUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        status:
+          $ref: '#/components/schemas/RoomStatus'
+        roomType:
+          $ref: '#/components/schemas/RoomType'
+        tagIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+    RoomListResponse:
+      type: object
+      required: [items, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Room'
+        total:
+          type: integer
+
+    RoomCreate:
+      type: object
+      required: [name, roomType, tagIds]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        roomType:
+          $ref: '#/components/schemas/RoomType'
+        tagIds:
+          type: array
+          minItems: 1
+          items:
+            type: integer
+            format: int64
+    RoomImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        url:
+          type: string
+          format: uri
+
     RoomStatus:
       title: Status of a room
       description: Status describes availablity of a room, wheter it's available to use, reserve, or neither
@@ -648,46 +730,62 @@ components:
         - class
         - laboratory
         - theater
-
     Reservation:
-     title: Room Reservation
-     description: A reservation request for a room schedule
-     type: object
-     required:
-       - schedId
-       - status
-     properties:
-       id:
-         type: integer
-         format: int64
-       schedId:
-         type: integer
-         format: int64
-       userId:
-         type: integer
-         format: int64
-       status:
-        $ref: '#/components/schemas/ReservationStatus'
-       description:
-          type: string
-
-    ReservationStatus:
-      title: Room Reservation Status
-      description: Status of a Room Reservation
-      type: string
-      enum:
-        - waiting
-        - denied
-        - accepted
-
-    Schedule:
-      title: Room Schedule
-      description: Time slot when a room is available
+      title: Reservation
       type: object
-      required:
-        - roomId
-        - startTime
-        - endTime
+      required: [id, schedId, userId, status, createdAt]
+      properties:
+        id:
+          type: integer
+          format: int64
+        schedId:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        status:
+          $ref: '#/components/schemas/ReservationStatus'
+        description:
+          type: string
+          maxLength: 500
+        createdAt:
+          type: string
+          format: date-time
+    ReservationCreate:
+      type: object
+      required: [schedId]
+      properties:
+        schedId:
+          type: integer
+          format: int64
+        description:
+          type: string
+          maxLength: 500
+    ReservationStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [accepted, denied]
+    ReservationStatus:
+      type: string
+      enum: [waiting, accepted, denied]
+    ReservationListResponse:
+      type: object
+      required: [items, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reservation'
+        total:
+          type: integer
+    Schedule:
+      title: Schedule
+      type: object
+      required: [id, roomId, startTime, endTime, isReserved]
       properties:
         id:
           type: integer
@@ -701,7 +799,18 @@ components:
         endTime:
           type: string
           format: date-time
-
+        isReserved:
+          type: boolean
+    ScheduleCreate:
+      type: object
+      required: [startTime, endTime]
+      properties:
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
     User:
       title: a User
       description: A User who is purchasing from the pet store
@@ -762,6 +871,7 @@ components:
           type: string
         message:
           type: string
+
 
 
 
