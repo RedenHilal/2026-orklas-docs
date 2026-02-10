@@ -1,6 +1,6 @@
 openapi: 3.0.0
 servers:
-  - url: 'http://petstore.swagger.io/v2'
+  - url: 'http://localhost:8080/'
 info:
   description: >-
     This is an api spec for room reservation program.
@@ -813,7 +813,7 @@ components:
           format: date-time
     User:
       title: a User
-      description: A User who is purchasing from the pet store
+      description: A User who is reserving/managing rooms
       type: object
       properties:
         id:
