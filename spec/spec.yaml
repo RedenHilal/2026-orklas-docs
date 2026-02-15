@@ -4,7 +4,7 @@ servers:
 info:
   description: >-
     This is an api spec for room reservation program.
-  version: 1.0.0
+  version: 1.1.0
   title: OpenAPI Orklas
   license:
     name: "Zlib License"
@@ -369,7 +369,7 @@ paths:
           description: Filter reservations starting from this date
           schema:
             type: string
-            format: date-time
+            format: time
         - name: limit
           in: query
           schema:
@@ -410,6 +410,52 @@ paths:
                 $ref: '#/components/schemas/Reservation'
         '409':
           description: Schedule already reserved or overlapping
+  /reservations/all:
+    get:
+      tags: [reservation]
+      summary: List all reservation
+      description: List all reservation
+      operationId: listReservationAll
+      parameters:
+        - name: status
+          description: Status of reservation
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ReservationStatus' 
+        - name: from
+          in: query
+          description: Filter reservations starting from this time
+          schema:
+            type: string
+            format: time
+        - name: to
+          in: query
+          description: Filter reservations starting to this time
+          schema:
+            type: string
+            format: time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      security:
+        - klas_auth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationListResponse'
   /reservations/{reservationId}:
     delete:
       tags: [reservation]
@@ -458,6 +504,52 @@ paths:
           description: Status updated
         '409':
           description: Invalid status transition
+  /schedules:
+    get:
+      tags: [schedule]
+      summary: List all schedules
+      description: List schedules for all rooms
+      operationId: listSchedules
+      parameters:
+        - name: status
+          description: Status of schedule, reserved or not
+          in: query
+          schema:
+            type: boolean
+        - name: from
+          in: query
+          description: Filter reservations starting from this time
+          schema:
+            type: string
+            format: time
+        - name: to
+          in: query
+          description: Filter reservations starting to this time
+          schema:
+            type: string
+            format: time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      security:
+        - klas_auth: []
+      responses:
+        '200':
+          description: List of schedules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Schedule'
   /rooms/{roomId}/schedules:
     parameters:
       - name: roomId
@@ -477,12 +569,12 @@ paths:
           in: query
           schema:
             type: string
-            format: date-time
+            format: time
         - name: to
           in: query
           schema:
             type: string
-            format: date-time
+            format: time
       responses:
         '200':
           description: List of schedules
@@ -733,7 +825,7 @@ components:
     Reservation:
       title: Reservation
       type: object
-      required: [id, schedId, userId, status, createdAt]
+      required: [id, schedId, userId, status, createdAt, date]
       properties:
         id:
           type: integer
@@ -749,12 +841,15 @@ components:
         description:
           type: string
           maxLength: 500
+        date:
+          type: string
+          format: date
         createdAt:
           type: string
           format: date-time
     ReservationCreate:
       type: object
-      required: [schedId]
+      required: [schedId, date]
       properties:
         schedId:
           type: integer
@@ -762,6 +857,9 @@ components:
         description:
           type: string
           maxLength: 500
+        date:
+          type: string
+          format: date
     ReservationStatusUpdate:
       type: object
       required: [status]
@@ -871,6 +969,7 @@ components:
           type: string
         message:
           type: string
+
 
 
 

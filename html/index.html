@@ -892,7 +892,7 @@ ul.nav-tabs {
 };
     defs["Reservation"] = {
   "title" : "Reservation",
-  "required" : [ "createdAt", "id", "schedId", "status", "userId" ],
+  "required" : [ "createdAt", "date", "id", "schedId", "status", "userId" ],
   "type" : "object",
   "properties" : {
     "id" : {
@@ -914,6 +914,10 @@ ul.nav-tabs {
       "maxLength" : 500,
       "type" : "string"
     },
+    "date" : {
+      "type" : "string",
+      "format" : "date"
+    },
     "createdAt" : {
       "type" : "string",
       "format" : "date-time"
@@ -921,7 +925,7 @@ ul.nav-tabs {
   }
 };
     defs["ReservationCreate"] = {
-  "required" : [ "schedId" ],
+  "required" : [ "date", "schedId" ],
   "type" : "object",
   "properties" : {
     "schedId" : {
@@ -931,6 +935,10 @@ ul.nav-tabs {
     "description" : {
       "maxLength" : 500,
       "type" : "string"
+    },
+    "date" : {
+      "type" : "string",
+      "format" : "date"
     }
   }
 };
@@ -1100,11 +1108,11 @@ ul.nav-tabs {
     },
     "startTime" : {
       "type" : "string",
-      "format" : "date-time"
+      "format" : "time"
     },
     "endTime" : {
       "type" : "string",
-      "format" : "date-time"
+      "format" : "time"
     },
     "isReserved" : {
       "type" : "boolean"
@@ -1117,11 +1125,11 @@ ul.nav-tabs {
   "properties" : {
     "startTime" : {
       "type" : "string",
-      "format" : "date-time"
+      "format" : "time"
     },
     "endTime" : {
       "type" : "string",
-      "format" : "date-time"
+      "format" : "time"
     }
   }
 };
@@ -1315,6 +1323,9 @@ ul.nav-tabs {
                     <li data-group="Reservation" data-name="listMyReservations" class="">
                       <a href="#api-Reservation-listMyReservations">listMyReservations</a>
                     </li>
+                    <li data-group="Reservation" data-name="listReservationAll" class="">
+                      <a href="#api-Reservation-listReservationAll">listReservationAll</a>
+                    </li>
                   <li class="nav-header" data-group="ReservationAdmin"><a href="#api-ReservationAdmin">API Methods - ReservationAdmin</a></li>
                     <li data-group="ReservationAdmin" data-name="updateReservationStatus" class="">
                       <a href="#api-ReservationAdmin-updateReservationStatus">updateReservationStatus</a>
@@ -1347,6 +1358,9 @@ ul.nav-tabs {
                     </li>
                     <li data-group="Schedule" data-name="listRoomSchedules" class="">
                       <a href="#api-Schedule-listRoomSchedules">listRoomSchedules</a>
+                    </li>
+                    <li data-group="Schedule" data-name="listSchedules" class="">
+                      <a href="#api-Schedule-listSchedules">listSchedules</a>
                     </li>
                   <li class="nav-header" data-group="User"><a href="#api-User">API Methods - User</a></li>
                     <li data-group="User" data-name="createUser" class="">
@@ -1383,7 +1397,7 @@ ul.nav-tabs {
         <div id="header">
           <div id="api-_">
             <h2 id="welcome-to-apidoc">API and SDK Documentation</h2>
-              <div class="app-desc">Version: 1.0.0</div>
+              <div class="app-desc">Version: 1.1.0</div>
             <hr>
             <div id="app-description" class="app-desc">
                 This is an api spec for room reservation program.
@@ -1933,6 +1947,7 @@ pub fn main() {
  -H "Content-Type: application/json" \
  "http://localhost:8080/reservations" \
  -d '{
+  &quot;date&quot; : &quot;2000-01-23&quot;,
   &quot;schedId&quot; : 0,
   &quot;description&quot; : &quot;description&quot;
 }'
@@ -2411,7 +2426,7 @@ $(document).ready(function() {
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
  -H "Authorization: Bearer [[accessToken]]" \
  -H "Accept: application/json" \
- "http://localhost:8080/reservations?status=&from=2013-10-20T19:20:30+01:00&limit=56&offset=56"
+ "http://localhost:8080/reservations?status=&from=from_example&limit=56&offset=56"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Reservation-listMyReservations-0-java">
@@ -2434,7 +2449,7 @@ public class ReservationApiExample {
         // Create an instance of the API class
         ReservationApi apiInstance = new ReservationApi();
         ReservationStatus status = ; // ReservationStatus | 
-        Date from = 2013-10-20T19:20:30+01:00; // Date | Filter reservations starting from this date
+        String from = from_example; // String | Filter reservations starting from this date
         Integer limit = 56; // Integer | 
         Integer offset = 56; // Integer | 
 
@@ -2456,7 +2471,7 @@ public class ReservationApiExample {
 final api_instance = DefaultApi();
 
 final ReservationStatus status = new ReservationStatus(); // ReservationStatus | 
-final Date from = new Date(); // Date | Filter reservations starting from this date
+final String from = new String(); // String | Filter reservations starting from this date
 final Integer limit = new Integer(); // Integer | 
 final Integer offset = new Integer(); // Integer | 
 
@@ -2477,7 +2492,7 @@ public class ReservationApiExample {
     public static void main(String[] args) {
         ReservationApi apiInstance = new ReservationApi();
         ReservationStatus status = ; // ReservationStatus | 
-        Date from = 2013-10-20T19:20:30+01:00; // Date | Filter reservations starting from this date
+        String from = from_example; // String | Filter reservations starting from this date
         Integer limit = 56; // Integer | 
         Integer offset = 56; // Integer | 
 
@@ -2504,7 +2519,7 @@ public class ReservationApiExample {
 // Create an instance of the API class
 ReservationApi *apiInstance = [[ReservationApi alloc] init];
 ReservationStatus *status = ; //  (optional) (default to null)
-Date *from = 2013-10-20T19:20:30+01:00; // Filter reservations starting from this date (optional) (default to null)
+String *from = from_example; // Filter reservations starting from this date (optional) (default to null)
 Integer *limit = 56; //  (optional) (default to 20)
 Integer *offset = 56; //  (optional) (default to 0)
 
@@ -2536,7 +2551,7 @@ klas_auth.accessToken = "YOUR ACCESS TOKEN";
 var api = new OpenApiOrklas.ReservationApi()
 var opts = {
   'status': , // {ReservationStatus} 
-  'from': 2013-10-20T19:20:30+01:00, // {Date} Filter reservations starting from this date
+  'from': from_example, // {String} Filter reservations starting from this date
   'limit': 56, // {Integer} 
   'offset': 56 // {Integer} 
 };
@@ -2574,7 +2589,7 @@ namespace Example
             // Create an instance of the API class
             var apiInstance = new ReservationApi();
             var status = new ReservationStatus(); // ReservationStatus |  (optional)  (default to null)
-            var from = 2013-10-20T19:20:30+01:00;  // Date | Filter reservations starting from this date (optional)  (default to null)
+            var from = from_example;  // String | Filter reservations starting from this date (optional)  (default to null)
             var limit = 56;  // Integer |  (optional)  (default to 20)
             var offset = 56;  // Integer |  (optional)  (default to 0)
 
@@ -2601,7 +2616,7 @@ OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('',
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\ReservationApi();
 $status = ; // ReservationStatus | 
-$from = 2013-10-20T19:20:30+01:00; // Date | Filter reservations starting from this date
+$from = from_example; // String | Filter reservations starting from this date
 $limit = 56; // Integer | 
 $offset = 56; // Integer | 
 
@@ -2625,7 +2640,7 @@ $WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::ReservationApi->new();
 my $status = ; # ReservationStatus | 
-my $from = 2013-10-20T19:20:30+01:00; # Date | Filter reservations starting from this date
+my $from = from_example; # String | Filter reservations starting from this date
 my $limit = 56; # Integer | 
 my $offset = 56; # Integer | 
 
@@ -2651,7 +2666,7 @@ openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 # Create an instance of the API class
 api_instance = openapi_client.ReservationApi()
 status =  # ReservationStatus |  (optional) (default to null)
-from = 2013-10-20T19:20:30+01:00 # Date | Filter reservations starting from this date (optional) (default to null)
+from = from_example # String | Filter reservations starting from this date (optional) (default to null)
 limit = 56 # Integer |  (optional) (default to 20)
 offset = 56 # Integer |  (optional) (default to 0)
 
@@ -2668,7 +2683,7 @@ except ApiException as e:
 
 pub fn main() {
     let status = ; // ReservationStatus
-    let from = 2013-10-20T19:20:30+01:00; // Date
+    let from = from_example; // String
     let limit = 56; // Integer
     let offset = 56; // Integer
 
@@ -2723,10 +2738,10 @@ pub fn main() {
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
-                    Date
+                    String
                 </span>
                     <span class="format">
-                        (date-time)
+                        (time)
                     </span>
 
                     <div class="inner description marked">
@@ -2849,6 +2864,523 @@ Filter reservations starting from this date
                                   </script>
                                 </div>
                                 <input id='responses-Reservation-listMyReservations-200-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Reservation-listReservationAll">
+                      <article id="api-Reservation-listReservationAll-0" data-group="User" data-name="listReservationAll" data-version="0">
+                        <div class="pull-left">
+                          <h1>listReservationAll</h1>
+                          <p>List all reservation</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">List all reservation</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/reservations/all</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Reservation-listReservationAll-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-dart">Dart</a></li>
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Reservation-listReservationAll-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Reservation-listReservationAll-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Reservation-listReservationAll-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Reservation-listReservationAll-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Authorization: Bearer [[accessToken]]" \
+ -H "Accept: application/json" \
+ "http://localhost:8080/reservations/all?status=&from=from_example&to=to_example&limit=56&offset=56"
+</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Reservation-listReservationAll-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.ReservationApi;
+
+import java.io.File;
+import java.util.*;
+
+public class ReservationApiExample {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: klas_auth
+        HttpBearerAuth klas_auth = (HttpBearerAuth) defaultClient.getAuthentication("klas_auth");
+        klas_auth.setBearerToken("BEARER TOKEN");
+
+        // Create an instance of the API class
+        ReservationApi apiInstance = new ReservationApi();
+        array[ReservationStatus] status = ; // array[ReservationStatus] | Status of reservation
+        String from = from_example; // String | Filter reservations starting from this time
+        String to = to_example; // String | Filter reservations starting to this time
+        Integer limit = 56; // Integer | 
+        Integer offset = 56; // Integer | 
+
+        try {
+            ReservationListResponse result = apiInstance.listReservationAll(status, from, to, limit, offset);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling ReservationApi#listReservationAll");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Reservation-listReservationAll-0-dart">
+                            <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
+
+final api_instance = DefaultApi();
+
+final array[ReservationStatus] status = new array[ReservationStatus](); // array[ReservationStatus] | Status of reservation
+final String from = new String(); // String | Filter reservations starting from this time
+final String to = new String(); // String | Filter reservations starting to this time
+final Integer limit = new Integer(); // Integer | 
+final Integer offset = new Integer(); // Integer | 
+
+try {
+    final result = await api_instance.listReservationAll(status, from, to, limit, offset);
+    print(result);
+} catch (e) {
+    print('Exception when calling DefaultApi->listReservationAll: $e\n');
+}
+
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Reservation-listReservationAll-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.ReservationApi;
+
+public class ReservationApiExample {
+    public static void main(String[] args) {
+        ReservationApi apiInstance = new ReservationApi();
+        array[ReservationStatus] status = ; // array[ReservationStatus] | Status of reservation
+        String from = from_example; // String | Filter reservations starting from this time
+        String to = to_example; // String | Filter reservations starting to this time
+        Integer limit = 56; // Integer | 
+        Integer offset = 56; // Integer | 
+
+        try {
+            ReservationListResponse result = apiInstance.listReservationAll(status, from, to, limit, offset);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling ReservationApi#listReservationAll");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Reservation-listReservationAll-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Reservation-listReservationAll-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: klas_auth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
+
+// Create an instance of the API class
+ReservationApi *apiInstance = [[ReservationApi alloc] init];
+array[ReservationStatus] *status = ; // Status of reservation (optional) (default to null)
+String *from = from_example; // Filter reservations starting from this time (optional) (default to null)
+String *to = to_example; // Filter reservations starting to this time (optional) (default to null)
+Integer *limit = 56; //  (optional) (default to 20)
+Integer *offset = 56; //  (optional) (default to 0)
+
+// List all reservation
+[apiInstance listReservationAllWith:status
+    from:from
+    to:to
+    limit:limit
+    offset:offset
+              completionHandler: ^(ReservationListResponse output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Reservation-listReservationAll-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var OpenApiOrklas = require('open_api_orklas');
+var defaultClient = OpenApiOrklas.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: klas_auth
+var klas_auth = defaultClient.authentications['klas_auth'];
+klas_auth.accessToken = "YOUR ACCESS TOKEN";
+
+// Create an instance of the API class
+var api = new OpenApiOrklas.ReservationApi()
+var opts = {
+  'status': , // {array[ReservationStatus]} Status of reservation
+  'from': from_example, // {String} Filter reservations starting from this time
+  'to': to_example, // {String} Filter reservations starting to this time
+  'limit': 56, // {Integer} 
+  'offset': 56 // {Integer} 
+};
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.listReservationAll(opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Reservation-listReservationAll-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Reservation-listReservationAll-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class listReservationAllExample
+    {
+        public void main()
+        {
+            // Configure Bearer (JWT) access token for authorization: klas_auth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
+
+            // Create an instance of the API class
+            var apiInstance = new ReservationApi();
+            var status = new array[ReservationStatus](); // array[ReservationStatus] | Status of reservation (optional)  (default to null)
+            var from = from_example;  // String | Filter reservations starting from this time (optional)  (default to null)
+            var to = to_example;  // String | Filter reservations starting to this time (optional)  (default to null)
+            var limit = 56;  // Integer |  (optional)  (default to 20)
+            var offset = 56;  // Integer |  (optional)  (default to 0)
+
+            try {
+                // List all reservation
+                ReservationListResponse result = apiInstance.listReservationAll(status, from, to, limit, offset);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling ReservationApi.listReservationAll: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Reservation-listReservationAll-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure Bearer (JWT) access token for authorization: klas_auth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\ReservationApi();
+$status = ; // array[ReservationStatus] | Status of reservation
+$from = from_example; // String | Filter reservations starting from this time
+$to = to_example; // String | Filter reservations starting to this time
+$limit = 56; // Integer | 
+$offset = 56; // Integer | 
+
+try {
+    $result = $api_instance->listReservationAll($status, $from, $to, $limit, $offset);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling ReservationApi->listReservationAll: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Reservation-listReservationAll-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::ReservationApi;
+
+# Configure Bearer (JWT) access token for authorization: klas_auth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::ReservationApi->new();
+my $status = []; # array[ReservationStatus] | Status of reservation
+my $from = from_example; # String | Filter reservations starting from this time
+my $to = to_example; # String | Filter reservations starting to this time
+my $limit = 56; # Integer | 
+my $offset = 56; # Integer | 
+
+eval {
+    my $result = $api_instance->listReservationAll(status => $status, from => $from, to => $to, limit => $limit, offset => $offset);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling ReservationApi->listReservationAll: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Reservation-listReservationAll-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Configure Bearer (JWT) access token for authorization: klas_auth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
+
+# Create an instance of the API class
+api_instance = openapi_client.ReservationApi()
+status =  # array[ReservationStatus] | Status of reservation (optional) (default to null)
+from = from_example # String | Filter reservations starting from this time (optional) (default to null)
+to = to_example # String | Filter reservations starting to this time (optional) (default to null)
+limit = 56 # Integer |  (optional) (default to 20)
+offset = 56 # Integer |  (optional) (default to 0)
+
+try:
+    # List all reservation
+    api_response = api_instance.list_reservation_all(status=status, from=from, to=to, limit=limit, offset=offset)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling ReservationApi->listReservationAll: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Reservation-listReservationAll-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate ReservationApi;
+
+pub fn main() {
+    let status = ; // array[ReservationStatus]
+    let from = from_example; // String
+    let to = to_example; // String
+    let limit = 56; // Integer
+    let offset = 56; // Integer
+
+    let mut context = ReservationApi::Context::default();
+    let result = client.listReservationAll(status, from, to, limit, offset, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">status</td>
+<td>
+
+
+    <div id="d2e199_listReservationAll_status">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    array[ReservationStatus]
+                </span>
+
+                    <div class="inner description marked">
+Status of reservation
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">from</td>
+<td>
+
+
+    <div id="d2e199_listReservationAll_from">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+                    <span class="format">
+                        (time)
+                    </span>
+
+                    <div class="inner description marked">
+Filter reservations starting from this time
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">to</td>
+<td>
+
+
+    <div id="d2e199_listReservationAll_to">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+                    <span class="format">
+                        (time)
+                    </span>
+
+                    <div class="inner description marked">
+Filter reservations starting to this time
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">limit</td>
+<td>
+
+
+    <div id="d2e199_listReservationAll_limit">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">offset</td>
+<td>
+
+
+    <div id="d2e199_listReservationAll_offset">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Reservation-listReservationAll-title-200"></h3>
+                            <p id="examples-Reservation-listReservationAll-description-200" class="marked"></p>
+                            <script>
+                              var responseReservation200_description = `Successful operation`;
+                              var responseReservation200_description_break = responseReservation200_description.indexOf('\n');
+                              if (responseReservation200_description_break == -1) {
+                                $("#examples-Reservation-listReservationAll-title-200").text("Status: 200 - " + responseReservation200_description);
+                              } else {
+                                $("#examples-Reservation-listReservationAll-title-200").text("Status: 200 - " + responseReservation200_description.substring(0, responseReservation200_description_break));
+                                $("#examples-Reservation-listReservationAll-description-200").html(responseReservation200_description.substring(responseReservation200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Reservation-listReservationAll-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Reservation-listReservationAll-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Reservation-listReservationAll-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Reservation-listReservationAll-200-schema">
+                                <div id="responses-Reservation-listReservationAll-schema-200" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Successful operation",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/ReservationListResponse"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Reservation-listReservationAll-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Reservation-listReservationAll-schema-200');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Reservation-listReservationAll-200-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                         </article>
@@ -6623,8 +7155,8 @@ pub fn main() {
  -H "Content-Type: application/json" \
  "http://localhost:8080/rooms/{roomId}/schedules" \
  -d '{
-  &quot;startTime&quot; : &quot;2000-01-23T04:56:07.000+00:00&quot;,
-  &quot;endTime&quot; : &quot;2000-01-23T04:56:07.000+00:00&quot;
+  &quot;startTime&quot; : &quot;startTime&quot;,
+  &quot;endTime&quot; : &quot;endTime&quot;
 }'
 </code></pre>
                           </div>
@@ -7556,7 +8088,7 @@ pub fn main() {
                           <div class="tab-pane active" id="examples-Schedule-listRoomSchedules-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
  -H "Accept: application/json" \
- "http://localhost:8080/rooms/{roomId}/schedules?from=2013-10-20T19:20:30+01:00&to=2013-10-20T19:20:30+01:00"
+ "http://localhost:8080/rooms/{roomId}/schedules?from=from_example&to=to_example"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Schedule-listRoomSchedules-0-java">
@@ -7574,8 +8106,8 @@ public class ScheduleApiExample {
         // Create an instance of the API class
         ScheduleApi apiInstance = new ScheduleApi();
         Long roomId = 789; // Long | 
-        Date from = 2013-10-20T19:20:30+01:00; // Date | 
-        Date to = 2013-10-20T19:20:30+01:00; // Date | 
+        String from = from_example; // String | 
+        String to = to_example; // String | 
 
         try {
             array[Schedule] result = apiInstance.listRoomSchedules(roomId, from, to);
@@ -7595,8 +8127,8 @@ public class ScheduleApiExample {
 final api_instance = DefaultApi();
 
 final Long roomId = new Long(); // Long | 
-final Date from = new Date(); // Date | 
-final Date to = new Date(); // Date | 
+final String from = new String(); // String | 
+final String to = new String(); // String | 
 
 try {
     final result = await api_instance.listRoomSchedules(roomId, from, to);
@@ -7615,8 +8147,8 @@ public class ScheduleApiExample {
     public static void main(String[] args) {
         ScheduleApi apiInstance = new ScheduleApi();
         Long roomId = 789; // Long | 
-        Date from = 2013-10-20T19:20:30+01:00; // Date | 
-        Date to = 2013-10-20T19:20:30+01:00; // Date | 
+        String from = from_example; // String | 
+        String to = to_example; // String | 
 
         try {
             array[Schedule] result = apiInstance.listRoomSchedules(roomId, from, to);
@@ -7638,8 +8170,8 @@ public class ScheduleApiExample {
 // Create an instance of the API class
 ScheduleApi *apiInstance = [[ScheduleApi alloc] init];
 Long *roomId = 789; //  (default to null)
-Date *from = 2013-10-20T19:20:30+01:00; //  (optional) (default to null)
-Date *to = 2013-10-20T19:20:30+01:00; //  (optional) (default to null)
+String *from = from_example; //  (optional) (default to null)
+String *to = to_example; //  (optional) (default to null)
 
 // List room schedules
 [apiInstance listRoomSchedulesWith:roomId
@@ -7663,8 +8195,8 @@ Date *to = 2013-10-20T19:20:30+01:00; //  (optional) (default to null)
 var api = new OpenApiOrklas.ScheduleApi()
 var roomId = 789; // {Long} 
 var opts = {
-  'from': 2013-10-20T19:20:30+01:00, // {Date} 
-  'to': 2013-10-20T19:20:30+01:00 // {Date} 
+  'from': from_example, // {String} 
+  'to': to_example // {String} 
 };
 
 var callback = function(error, data, response) {
@@ -7698,8 +8230,8 @@ namespace Example
             // Create an instance of the API class
             var apiInstance = new ScheduleApi();
             var roomId = 789;  // Long |  (default to null)
-            var from = 2013-10-20T19:20:30+01:00;  // Date |  (optional)  (default to null)
-            var to = 2013-10-20T19:20:30+01:00;  // Date |  (optional)  (default to null)
+            var from = from_example;  // String |  (optional)  (default to null)
+            var to = to_example;  // String |  (optional)  (default to null)
 
             try {
                 // List room schedules
@@ -7721,8 +8253,8 @@ require_once(__DIR__ . '/vendor/autoload.php');
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\ScheduleApi();
 $roomId = 789; // Long | 
-$from = 2013-10-20T19:20:30+01:00; // Date | 
-$to = 2013-10-20T19:20:30+01:00; // Date | 
+$from = from_example; // String | 
+$to = to_example; // String | 
 
 try {
     $result = $api_instance->listRoomSchedules($roomId, $from, $to);
@@ -7741,8 +8273,8 @@ use WWW::OPenAPIClient::ScheduleApi;
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::ScheduleApi->new();
 my $roomId = 789; # Long | 
-my $from = 2013-10-20T19:20:30+01:00; # Date | 
-my $to = 2013-10-20T19:20:30+01:00; # Date | 
+my $from = from_example; # String | 
+my $to = to_example; # String | 
 
 eval {
     my $result = $api_instance->listRoomSchedules(roomId => $roomId, from => $from, to => $to);
@@ -7763,8 +8295,8 @@ from pprint import pprint
 # Create an instance of the API class
 api_instance = openapi_client.ScheduleApi()
 roomId = 789 # Long |  (default to null)
-from = 2013-10-20T19:20:30+01:00 # Date |  (optional) (default to null)
-to = 2013-10-20T19:20:30+01:00 # Date |  (optional) (default to null)
+from = from_example # String |  (optional) (default to null)
+to = to_example # String |  (optional) (default to null)
 
 try:
     # List room schedules
@@ -7779,8 +8311,8 @@ except ApiException as e:
 
 pub fn main() {
     let roomId = 789; // Long
-    let from = 2013-10-20T19:20:30+01:00; // Date
-    let to = 2013-10-20T19:20:30+01:00; // Date
+    let from = from_example; // String
+    let to = to_example; // String
 
     let mut context = ScheduleApi::Context::default();
     let result = client.listRoomSchedules(roomId, from, to, &context).wait();
@@ -7846,10 +8378,10 @@ pub fn main() {
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
-                    Date
+                    String
                 </span>
                     <span class="format">
-                        (date-time)
+                        (time)
                     </span>
 
             </div>
@@ -7866,10 +8398,10 @@ pub fn main() {
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
-                    Date
+                    String
                 </span>
                     <span class="format">
-                        (date-time)
+                        (time)
                     </span>
 
             </div>
@@ -7958,6 +8490,526 @@ pub fn main() {
                                   </script>
                                 </div>
                                 <input id='responses-Schedule-listRoomSchedules-200-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Schedule-listSchedules">
+                      <article id="api-Schedule-listSchedules-0" data-group="User" data-name="listSchedules" data-version="0">
+                        <div class="pull-left">
+                          <h1>listSchedules</h1>
+                          <p>List all schedules</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">List schedules for all rooms</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/schedules</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Schedule-listSchedules-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-dart">Dart</a></li>
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Schedule-listSchedules-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Schedule-listSchedules-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Schedule-listSchedules-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Schedule-listSchedules-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Authorization: Bearer [[accessToken]]" \
+ -H "Accept: application/json" \
+ "http://localhost:8080/schedules?status=true&from=from_example&to=to_example&limit=56&offset=56"
+</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Schedule-listSchedules-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.ScheduleApi;
+
+import java.io.File;
+import java.util.*;
+
+public class ScheduleApiExample {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: klas_auth
+        HttpBearerAuth klas_auth = (HttpBearerAuth) defaultClient.getAuthentication("klas_auth");
+        klas_auth.setBearerToken("BEARER TOKEN");
+
+        // Create an instance of the API class
+        ScheduleApi apiInstance = new ScheduleApi();
+        Boolean status = true; // Boolean | Status of schedule, reserved or not
+        String from = from_example; // String | Filter reservations starting from this time
+        String to = to_example; // String | Filter reservations starting to this time
+        Integer limit = 56; // Integer | 
+        Integer offset = 56; // Integer | 
+
+        try {
+            array[Schedule] result = apiInstance.listSchedules(status, from, to, limit, offset);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling ScheduleApi#listSchedules");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Schedule-listSchedules-0-dart">
+                            <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
+
+final api_instance = DefaultApi();
+
+final Boolean status = new Boolean(); // Boolean | Status of schedule, reserved or not
+final String from = new String(); // String | Filter reservations starting from this time
+final String to = new String(); // String | Filter reservations starting to this time
+final Integer limit = new Integer(); // Integer | 
+final Integer offset = new Integer(); // Integer | 
+
+try {
+    final result = await api_instance.listSchedules(status, from, to, limit, offset);
+    print(result);
+} catch (e) {
+    print('Exception when calling DefaultApi->listSchedules: $e\n');
+}
+
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Schedule-listSchedules-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.ScheduleApi;
+
+public class ScheduleApiExample {
+    public static void main(String[] args) {
+        ScheduleApi apiInstance = new ScheduleApi();
+        Boolean status = true; // Boolean | Status of schedule, reserved or not
+        String from = from_example; // String | Filter reservations starting from this time
+        String to = to_example; // String | Filter reservations starting to this time
+        Integer limit = 56; // Integer | 
+        Integer offset = 56; // Integer | 
+
+        try {
+            array[Schedule] result = apiInstance.listSchedules(status, from, to, limit, offset);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling ScheduleApi#listSchedules");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Schedule-listSchedules-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Schedule-listSchedules-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: klas_auth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
+
+// Create an instance of the API class
+ScheduleApi *apiInstance = [[ScheduleApi alloc] init];
+Boolean *status = true; // Status of schedule, reserved or not (optional) (default to null)
+String *from = from_example; // Filter reservations starting from this time (optional) (default to null)
+String *to = to_example; // Filter reservations starting to this time (optional) (default to null)
+Integer *limit = 56; //  (optional) (default to 20)
+Integer *offset = 56; //  (optional) (default to 0)
+
+// List all schedules
+[apiInstance listSchedulesWith:status
+    from:from
+    to:to
+    limit:limit
+    offset:offset
+              completionHandler: ^(array[Schedule] output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Schedule-listSchedules-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var OpenApiOrklas = require('open_api_orklas');
+var defaultClient = OpenApiOrklas.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: klas_auth
+var klas_auth = defaultClient.authentications['klas_auth'];
+klas_auth.accessToken = "YOUR ACCESS TOKEN";
+
+// Create an instance of the API class
+var api = new OpenApiOrklas.ScheduleApi()
+var opts = {
+  'status': true, // {Boolean} Status of schedule, reserved or not
+  'from': from_example, // {String} Filter reservations starting from this time
+  'to': to_example, // {String} Filter reservations starting to this time
+  'limit': 56, // {Integer} 
+  'offset': 56 // {Integer} 
+};
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.listSchedules(opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Schedule-listSchedules-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Schedule-listSchedules-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class listSchedulesExample
+    {
+        public void main()
+        {
+            // Configure Bearer (JWT) access token for authorization: klas_auth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
+
+            // Create an instance of the API class
+            var apiInstance = new ScheduleApi();
+            var status = true;  // Boolean | Status of schedule, reserved or not (optional)  (default to null)
+            var from = from_example;  // String | Filter reservations starting from this time (optional)  (default to null)
+            var to = to_example;  // String | Filter reservations starting to this time (optional)  (default to null)
+            var limit = 56;  // Integer |  (optional)  (default to 20)
+            var offset = 56;  // Integer |  (optional)  (default to 0)
+
+            try {
+                // List all schedules
+                array[Schedule] result = apiInstance.listSchedules(status, from, to, limit, offset);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling ScheduleApi.listSchedules: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Schedule-listSchedules-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure Bearer (JWT) access token for authorization: klas_auth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\ScheduleApi();
+$status = true; // Boolean | Status of schedule, reserved or not
+$from = from_example; // String | Filter reservations starting from this time
+$to = to_example; // String | Filter reservations starting to this time
+$limit = 56; // Integer | 
+$offset = 56; // Integer | 
+
+try {
+    $result = $api_instance->listSchedules($status, $from, $to, $limit, $offset);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling ScheduleApi->listSchedules: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Schedule-listSchedules-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::ScheduleApi;
+
+# Configure Bearer (JWT) access token for authorization: klas_auth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::ScheduleApi->new();
+my $status = true; # Boolean | Status of schedule, reserved or not
+my $from = from_example; # String | Filter reservations starting from this time
+my $to = to_example; # String | Filter reservations starting to this time
+my $limit = 56; # Integer | 
+my $offset = 56; # Integer | 
+
+eval {
+    my $result = $api_instance->listSchedules(status => $status, from => $from, to => $to, limit => $limit, offset => $offset);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling ScheduleApi->listSchedules: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Schedule-listSchedules-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Configure Bearer (JWT) access token for authorization: klas_auth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
+
+# Create an instance of the API class
+api_instance = openapi_client.ScheduleApi()
+status = true # Boolean | Status of schedule, reserved or not (optional) (default to null)
+from = from_example # String | Filter reservations starting from this time (optional) (default to null)
+to = to_example # String | Filter reservations starting to this time (optional) (default to null)
+limit = 56 # Integer |  (optional) (default to 20)
+offset = 56 # Integer |  (optional) (default to 0)
+
+try:
+    # List all schedules
+    api_response = api_instance.list_schedules(status=status, from=from, to=to, limit=limit, offset=offset)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling ScheduleApi->listSchedules: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Schedule-listSchedules-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate ScheduleApi;
+
+pub fn main() {
+    let status = true; // Boolean
+    let from = from_example; // String
+    let to = to_example; // String
+    let limit = 56; // Integer
+    let offset = 56; // Integer
+
+    let mut context = ScheduleApi::Context::default();
+    let result = client.listSchedules(status, from, to, limit, offset, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">status</td>
+<td>
+
+
+    <div id="d2e199_listSchedules_status">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Boolean
+                </span>
+
+                    <div class="inner description marked">
+Status of schedule, reserved or not
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">from</td>
+<td>
+
+
+    <div id="d2e199_listSchedules_from">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+                    <span class="format">
+                        (time)
+                    </span>
+
+                    <div class="inner description marked">
+Filter reservations starting from this time
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">to</td>
+<td>
+
+
+    <div id="d2e199_listSchedules_to">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+                    <span class="format">
+                        (time)
+                    </span>
+
+                    <div class="inner description marked">
+Filter reservations starting to this time
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">limit</td>
+<td>
+
+
+    <div id="d2e199_listSchedules_limit">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">offset</td>
+<td>
+
+
+    <div id="d2e199_listSchedules_offset">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Schedule-listSchedules-title-200"></h3>
+                            <p id="examples-Schedule-listSchedules-description-200" class="marked"></p>
+                            <script>
+                              var responseSchedule200_description = `List of schedules`;
+                              var responseSchedule200_description_break = responseSchedule200_description.indexOf('\n');
+                              if (responseSchedule200_description_break == -1) {
+                                $("#examples-Schedule-listSchedules-title-200").text("Status: 200 - " + responseSchedule200_description);
+                              } else {
+                                $("#examples-Schedule-listSchedules-title-200").text("Status: 200 - " + responseSchedule200_description.substring(0, responseSchedule200_description_break));
+                                $("#examples-Schedule-listSchedules-description-200").html(responseSchedule200_description.substring(responseSchedule200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Schedule-listSchedules-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Schedule-listSchedules-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Schedule-listSchedules-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Schedule-listSchedules-200-schema">
+                                <div id="responses-Schedule-listSchedules-schema-200" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "List of schedules",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/Schedule"
+        }
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Schedule-listSchedules-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Schedule-listSchedules-schema-200');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Schedule-listSchedules-200-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                         </article>
