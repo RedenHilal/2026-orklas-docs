@@ -1,6 +1,6 @@
 = OpenAPI Orklas
 team@openapitools.org
-1.0.0
+1.1.0
 :toc: left
 :numbered:
 :toclevels: 4
@@ -308,6 +308,112 @@ ifdef::internal-generation[]
 ===== Implementation
 
 // markup not found, no include::{specDir}reservations/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.listReservationAll]
+==== listReservationAll
+
+`GET /reservations/all`
+
+List all reservation
+
+===== Description
+
+List all reservation
+
+
+// markup not found, no include::{specDir}reservations/all/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+
+
+
+====== Query Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| status
+| Status of reservation <<ReservationStatus>>
+| -
+| null
+| 
+
+| from
+| Filter reservations starting from this time 
+| -
+| null
+| 
+
+| to
+| Filter reservations starting to this time 
+| -
+| null
+| 
+
+| limit
+|  
+| -
+| 20
+| 
+
+| offset
+|  
+| -
+| 0
+| 
+
+|===
+
+
+===== Return Type
+
+<<ReservationListResponse>>
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| Successful operation
+|  <<ReservationListResponse>>
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}reservations/all/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}reservations/all/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :reservations/all/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}reservations/all/GET/implementation.adoc[opts=optional]
 
 
 endif::internal-generation[]
@@ -1304,6 +1410,112 @@ ifdef::internal-generation[]
 endif::internal-generation[]
 
 
+[.listSchedules]
+==== listSchedules
+
+`GET /schedules`
+
+List all schedules
+
+===== Description
+
+List schedules for all rooms
+
+
+// markup not found, no include::{specDir}schedules/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+
+
+
+====== Query Parameters
+
+[cols="2,3,1,1,1"]
+|===
+|Name| Description| Required| Default| Pattern
+
+| status
+| Status of schedule, reserved or not 
+| -
+| null
+| 
+
+| from
+| Filter reservations starting from this time 
+| -
+| null
+| 
+
+| to
+| Filter reservations starting to this time 
+| -
+| null
+| 
+
+| limit
+|  
+| -
+| 20
+| 
+
+| offset
+|  
+| -
+| 0
+| 
+
+|===
+
+
+===== Return Type
+
+array[<<Schedule>>]
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,1"]
+|===
+| Code | Message | Datatype
+
+
+| 200
+| List of schedules
+| List[<<Schedule>>] 
+
+|===
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}schedules/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}schedules/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :schedules/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}schedules/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
 [.User]
 === User
 
@@ -2041,6 +2253,13 @@ Describes the result of uploading an image resource
 | 
 |     
 
+| date
+| X
+| 
+|   date  
+| 
+| date    
+
 | createdAt
 | X
 | 
@@ -2076,6 +2295,13 @@ Describes the result of uploading an image resource
 |   String  
 | 
 |     
+
+| date
+| X
+| 
+|   date  
+| 
+| date    
 
 |===
 
@@ -2414,16 +2640,16 @@ Yes, it&#39;s a type of a room
 | startTime
 | X
 | 
-|   Date  
+|   String  
 | 
-| date-time    
+| time    
 
 | endTime
 | X
 | 
-|   Date  
+|   String  
 | 
-| date-time    
+| time    
 
 | isReserved
 | X
@@ -2450,16 +2676,16 @@ Yes, it&#39;s a type of a room
 | startTime
 | X
 | 
-|   Date  
+|   String  
 | 
-| date-time    
+| time    
 
 | endTime
 | X
 | 
-|   Date  
+|   String  
 | 
-| date-time    
+| time    
 
 |===
 
